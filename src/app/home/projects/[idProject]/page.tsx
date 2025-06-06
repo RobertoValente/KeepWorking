@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetProjectById } from "@/hooks/home/use-getprojectbyid";
 import { CircleCheckBig, CircleDot, ClipboardPen, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
@@ -91,19 +92,49 @@ export default function ProjectPage() {
                                                 {project.tasks.map(task => (
                                                     <div
                                                         key={task.id}
-                                                        className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-2 sm:gap-4 p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
+                                                        className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
                                                     >
-                                                        <div>
+                                                        <div className="flex items-center gap-3 w-full">
+                                                            <Input
+                                                                id={`task-${task.id}`}
+                                                                type="checkbox"
+                                                                checked={!!task.isDone}
+                                                                onChange={() => alert(`Toggle done for task: ${task.content}`)}
+                                                                className="accent-green-500 size-5 cursor-pointer"
+                                                            />
                                                             <CircleDot
-                                                                className="!size-3"
+                                                                className="!size-2"
                                                                 style={{
                                                                     color: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'orange' : 'green',
                                                                     fill: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'orange' : 'green'
                                                                 }}
                                                             />
-                                                            <h3 className="font-semibold">{task.content}</h3>
-                                                            <p className="text-sm text-gray-600 dark:text-gray-400">{task.priority}</p>
-                                                            {task.dueDate && (<span className="text-xs text-gray-500 dark:text-gray-400">Due: {formatDate(task.dueDate)}</span>)}
+                                                            <div className="flex flex-col items-start flex-1 min-w-0">
+                                                                <h3 className="font-semibold truncate">{task.content}</h3>
+                                                                <div className="flex items-center gap-2 mt-1">
+                                                                    {task.dueDate && (
+                                                                        <span className="text-xs text-gray-500 dark:text-gray-400">Complete until: {formatDate(task.dueDate)}</span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <Button
+                                                                onClick={() => alert(`Edit task: ${task.content}`)}
+                                                                className="cursor-pointer"
+                                                                variant={"outline"}
+                                                                size={"icon"}
+                                                                title="Edit task"
+                                                            >
+                                                                <Pencil className="size-4 text-yellow-500 dark:text-yellow-400" />
+                                                            </Button>
+                                                            <Button
+                                                                onClick={() => alert(`Delete task: ${task.content}`)}
+                                                                className="cursor-pointer"
+                                                                variant={"outline"}
+                                                                size={"icon"}
+                                                                title="Delete task"
+                                                            >
+                                                                <Trash2 className="size-4 text-red-500 dark:text-red-400" />
+                                                            </Button>
                                                         </div>
                                                     </div>
                                                 ))}
