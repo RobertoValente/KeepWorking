@@ -109,8 +109,10 @@ export default function ProjectPage() {
                                                                     fill: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'orange' : 'green'
                                                                 }}
                                                             />
-                                                            <div className="flex flex-col items-start flex-1 min-w-0">
-                                                                <h3 className="font-semibold truncate">{task.content}</h3>
+                                                            <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
+                                                                <h3 className="font-semibold truncate w-full break-words whitespace-pre-line text-balance">
+                                                                    {task.content}
+                                                                </h3>
                                                                 <div className="flex items-center gap-2 mt-1">
                                                                     {task.dueDate && (
                                                                         <span className="text-xs text-gray-500 dark:text-gray-400">Complete until: {formatDate(task.dueDate)}</span>
