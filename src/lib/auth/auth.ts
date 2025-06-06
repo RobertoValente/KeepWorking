@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../drizzle/index";
 import { account, session, user, verification } from "../drizzle/schema";
-import { sendResetPasswordEmail, sendConfirmEmail } from "@/lib/resend/index";
 
 /**
  * Interesting things to check:
@@ -21,27 +20,10 @@ export const auth = betterAuth({
             account, session, user, verification
         }
     }),
-    emailAndPassword: {
-        enabled: true,
-        requireEmailVerification: false,
-        autoSignIn: true,
-        sendResetPassword: async ({ user, url }) => {
-            const sentResetPasswordEmail = await sendResetPasswordEmail(user.email, url);
-            if(!sentResetPasswordEmail.status) console.error("[ERROR] Email not sent:", sentResetPasswordEmail.error);
-        },
-    },
-    emailVerification: {
-        sendOnSignUp: true,
-        autoSignInAfterVerification: true,
-        sendVerificationEmail: async ({ user, url }) => {
-            const sentConfirmEmail = await sendConfirmEmail(user.email, url);
-            if(!sentConfirmEmail.status) console.error("[ERROR] Email not sent:", sentConfirmEmail.error);
-        },
-    },
     socialProviders: {
-        google: {
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        github: {
+            clientId: process.env.GITHUB_CLIENT_ID!,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET!,
         }
     },
 });
