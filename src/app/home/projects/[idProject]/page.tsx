@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetProjectById } from "@/hooks/home/use-getprojectbyid";
-import { CircleCheckBig, CircleDot, ClipboardPen, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { CircleDot, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useParams } from "next/navigation";
 
 function formatDate(date: Date | string | undefined): string {
@@ -75,14 +75,14 @@ export default function ProjectPage() {
                             </TabsList>
                             <TabsContent value="tasks">
                                 <Card className="w-full p-2">
-                                    <CardHeader className="p-0">
+                                    <CardHeader className="p-2">
                                         <CardDescription>
                                             <Button className="cursor-pointer w-full" variant="outline">
                                                 <Plus className="size-4" />
                                             </Button>
                                         </CardDescription>
                                     </CardHeader>
-                                    <CardContent className="-mt-4 p-2 text-center">
+                                    <CardContent className="-mt-8 p-2 text-center">
                                         {!project.tasks || project.tasks.length === 0 ? (
                                             <span className="text-[13px] text-muted-foreground">
                                                 No tasks found!
@@ -95,29 +95,28 @@ export default function ProjectPage() {
                                                         className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
                                                     >
                                                         <div className="flex items-center gap-3 w-full">
-                                                            <Input
+                                                            <Checkbox
                                                                 id={`task-${task.id}`}
-                                                                type="checkbox"
                                                                 checked={!!task.isDone}
                                                                 onChange={() => alert(`Toggle done for task: ${task.content}`)}
-                                                                className="accent-green-500 size-5 cursor-pointer"
+                                                                className="cursor-pointer size-5 "
                                                             />
                                                             <CircleDot
-                                                                className="!size-2"
+                                                                className="!size-3"
                                                                 style={{
                                                                     color: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'orange' : 'green',
                                                                     fill: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'orange' : 'green'
                                                                 }}
                                                             />
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
-                                                                <h3 className="font-semibold truncate w-full break-words whitespace-pre-line text-balance">
+                                                                <h3 className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
                                                                     {task.content}
                                                                 </h3>
-                                                                <div className="flex items-center gap-2 mt-1">
-                                                                    {task.dueDate && (
+                                                                {task.dueDate && (
+                                                                    <div className="flex items-center gap-2 mt-1">
                                                                         <span className="text-xs text-gray-500 dark:text-gray-400">Complete until: {formatDate(task.dueDate)}</span>
-                                                                    )}
-                                                                </div>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <Button
                                                                 onClick={() => alert(`Edit task: ${task.content}`)}
@@ -135,7 +134,7 @@ export default function ProjectPage() {
                                                                 size={"icon"}
                                                                 title="Delete task"
                                                             >
-                                                                <Trash2 className="size-4 text-red-500 dark:text-red-400" />
+                                                                <X className="size-4 text-red-500 dark:text-red-400" />
                                                             </Button>
                                                         </div>
                                                     </div>
@@ -145,8 +144,61 @@ export default function ProjectPage() {
                                     </CardContent>
                                 </Card>
                             </TabsContent>
+                            
+                            
                             <TabsContent value="notes">
-                                Bbbb
+                                <Card className="w-full p-2">
+                                    <CardHeader className="p-2">
+                                        <CardDescription>
+                                            <Button className="cursor-pointer w-full" variant="outline">
+                                                <Plus className="size-4" />
+                                            </Button>
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="-mt-8 p-2 text-center">
+                                        {!project.notes || project.notes.length === 0 ? (
+                                            <span className="text-[13px] text-muted-foreground">
+                                                No notes found!
+                                            </span>
+                                        ) : (
+                                            <div className="flex flex-col gap-4 w-full">
+                                                {project.notes.map(note => (
+                                                    <div
+                                                        key={note.id}
+                                                        className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
+                                                    >
+                                                        <div className="flex items-center gap-3 w-full">
+                                                            {note.isPinned && (<CircleDot className="!size-3 text-yellow-500 fill-yellow-500" />)}
+                                                            <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
+                                                                <h3 className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
+                                                                    {note.content}
+                                                                </h3>
+                                                            </div>
+                                                            <Button
+                                                                onClick={() => alert(`Edit note: ${note.content}`)}
+                                                                className="cursor-pointer"
+                                                                variant={"outline"}
+                                                                size={"icon"}
+                                                                title="Edit note"
+                                                            >
+                                                                <Pencil className="size-4 text-yellow-500 dark:text-yellow-400" />
+                                                            </Button>
+                                                            <Button
+                                                                onClick={() => alert(`Delete note: ${note.content}`)}
+                                                                className="cursor-pointer"
+                                                                variant={"outline"}
+                                                                size={"icon"}
+                                                                title="Delete note"
+                                                            >
+                                                                <X className="size-4 text-red-500 dark:text-red-400" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
                             </TabsContent>
                         </Tabs>
                         
