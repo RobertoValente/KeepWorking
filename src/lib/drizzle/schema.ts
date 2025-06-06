@@ -1,10 +1,10 @@
-import { mysqlTable, varchar, text, timestamp, boolean } from "drizzle-orm/mysql-core";
+import { mysqlTable, varchar, text, timestamp, tinyint } from "drizzle-orm/mysql-core";
 
 export const user = mysqlTable("user", {
     id: varchar('id', { length: 36 }).primaryKey(),
     name: text('name').notNull(),
     email: varchar('email', { length: 255 }).notNull().unique(),
-    emailVerified: boolean('email_verified').$defaultFn(() => false).notNull(),
+    emailVerified: tinyint('email_verified').notNull().$defaultFn(() => 0),
     image: text('image'),
     createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
     updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull()
@@ -44,4 +44,35 @@ export const verification = mysqlTable("verification", {
     expiresAt: timestamp('expires_at').notNull(),
     createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
     updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date())
+});
+
+export const project = mysqlTable("project", {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    name: text('name').notNull().$defaultFn(() => 'New Project'),
+    description: text('description'),
+    color: text('color').notNull().$defaultFn(() => 'blue'),
+    isValid: tinyint('is_valid').$defaultFn(() => 1).notNull(),
+    createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    userId: varchar('user_id', { length: 36 }).notNull().references(() => user.id, { onDelete: 'cascade' })
+});
+
+export const task = mysqlTable("task", {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    content: text('content').notNull(),
+    priority: text('priority').notNull().$defaultFn(() => 'normal'),
+    dueDate: timestamp('due_date'),
+    isDone: tinyint('isDone').notNull().$defaultFn(() => 0),
+    createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    projectId: varchar('project_id', { length: 36 }).notNull().references(() => project.id, { onDelete: 'cascade' }),
+});
+
+export const note = mysqlTable("note", {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    content: text('content').notNull(),
+    isPinned: tinyint('is_pinned').notNull().$defaultFn(() => 0),
+    createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    projectId: varchar('project_id', { length: 36 }).notNull().references(() => project.id, { onDelete: 'cascade' }),
 });
