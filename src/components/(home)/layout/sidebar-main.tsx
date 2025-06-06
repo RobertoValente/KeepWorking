@@ -2,8 +2,8 @@
 
 import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button";
-import { useProjects } from "@/hooks/home/use-getprojects";
-import { useCreateProject } from "@/hooks/home/use-createprojects";
+import { useGetProjects } from "@/hooks/use-project";
+import { useCreateProject } from "@/hooks/use-project";
 import { Plus, Loader2, CircleDot } from "lucide-react"
 import { useSession } from "@/lib/auth/client";
 import { usePathname } from "next/navigation";
@@ -33,7 +33,7 @@ export function SidebarMain() {
         (!data?.user?.id) ? toast.error("Was not possible to get UserId!") : createProject.mutate(data.user.id);
     }
 
-    const { data: projects, isLoading, error, isError } = useProjects(data?.user.id || "");
+    const { data: projects, isLoading, error, isError } = useGetProjects(data?.user.id || "");
     if(isError) console.error("Error loading projects:", error);
 
     return (

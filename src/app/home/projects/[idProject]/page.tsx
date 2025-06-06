@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useGetProjectById } from "@/hooks/home/use-getprojectbyid";
+import { useGetProjectById } from "@/hooks/use-project";
 import { CircleDot, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useParams } from "next/navigation";
 

@@ -33,6 +33,26 @@ export const createProject = async (userId: string) => {
     return project;
 }
 
+export const updateProject = async (projectId: string, userId: string, data: { name?: string; description?: string; color?: string }) => {
+    const session = await getUserSession();
+    
+    if(!session || !session?.user) throw new Error("User not authenticated!");
+    if(session.user.id !== userId) throw new Error("UserId and SessionUserId are different!");
+
+    const project = await Query.updateProject(projectId, userId, data);
+    return project;
+}
+
+export const deleteProject = async (projectId: string, userId: string) => {
+    const session = await getUserSession();
+
+    if(!session || !session?.user) throw new Error("User not authenticated!");
+    if(session.user.id !== userId) throw new Error("UserId and SessionUserId are different!");
+
+    const project = await Query.deleteProject(projectId, userId);
+    return project;
+}
+
 async function getUserSession() {
     return auth.api.getSession({
         headers: await headers(),

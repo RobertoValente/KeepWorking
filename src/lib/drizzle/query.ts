@@ -62,6 +62,30 @@ export const Query = {
         return newProject;
     },
 
+    updateProject: async function(projectId: string, userId: string, updates: Partial<Project>): Promise<void> {
+        await db
+            .update(project)
+            .set(updates)
+            .where(
+                and(
+                    eq(project.id, projectId),
+                    eq(project.userId, userId)
+                )
+            );
+    },
+
+    deleteProject: async function(projectId: string, userId: string): Promise<void> {
+        await db
+            .update(project)
+            .set({ isValid: 0 })
+            .where(
+                and(
+                    eq(project.id, projectId),
+                    eq(project.userId, userId)
+                )
+            );
+    },
+
     getUsers: async function(): Promise<User[]> {
         return await db
             .select()
