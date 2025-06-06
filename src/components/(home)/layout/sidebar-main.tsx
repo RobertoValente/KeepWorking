@@ -92,7 +92,6 @@ export function SidebarMain() {
                 </SidebarMenu>
             </SidebarGroupContent>
         </SidebarGroup>
-        
         </>
     )
 }

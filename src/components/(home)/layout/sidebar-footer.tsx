@@ -4,11 +4,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AppContext } from "@/components/(home)/layout/app-context-provider"
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { LogOut, Monitor, Moon, Sun } from "lucide-react"
+import { ExternalLink, LogOut, Monitor, Moon, Sun } from "lucide-react"
 import { signOut } from "@/lib/auth/client"
 import { useRouter } from "next/navigation"
 import { useContext } from "react"
 import { toast } from "sonner"
+import Link from "next/link"
 
 export function SidebarFooter() {
     const { theme, updateTheme } = useContext(AppContext);
@@ -54,6 +55,17 @@ export function SidebarFooter() {
                         </SelectItem>
                     </SelectContent>
                 </Select>
+            </SidebarMenuItem>
+            <SidebarMenuItem key="GoogleCalendarBtn">
+                <Link href={"https://calendar.google.com/calendar/u/0/r"} target="_blank">
+                    <Button
+                        variant="outline"
+                        className="w-full hover:cursor-pointer"
+                    >
+                        <ExternalLink className="size-4" />
+                        Google Calendar
+                    </Button>
+                </Link>
             </SidebarMenuItem>
             <SidebarMenuItem key="LogoutSidebarBtn">
                 <Button
