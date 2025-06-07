@@ -14,7 +14,7 @@ export function useCreateNote() {
                 if (!oldData) return null;
                 return {
                     ...oldData,
-                    notes: [...(oldData.notes || []), newNote],
+                    notes: [...(oldData.notes || []), newNote].sort((a, b) => (b.isPinned ?? 0) - (a.isPinned ?? 0)),
                 };
             });
         },

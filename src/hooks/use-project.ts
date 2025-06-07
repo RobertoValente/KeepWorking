@@ -26,7 +26,7 @@ export const useCreateProject = () => {
         onSuccess: (newProject, userId) => {
             queryClient.invalidateQueries({ queryKey: ['projects', userId] });
             queryClient.setQueryData(['projects', userId], (oldData: Project[]) => {
-                return [...(oldData || []), newProject];
+                return [newProject, ...(oldData || [])];
             });
         },
     });
@@ -57,6 +57,7 @@ export function useDeleteProject() {
             queryClient.setQueryData(['projects', variables.userId], (oldData: Project[]) => {
                 return oldData?.filter(project => project.id !== variables.projectId) || [];
             });
+            queryClient.removeQueries({ queryKey: ['project', variables.projectId] });
         },
     });
 }

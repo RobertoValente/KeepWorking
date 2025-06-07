@@ -13,7 +13,10 @@ export function useCreateTask() {
                 if (!oldData) return null;
                 return {
                     ...oldData,
-                    tasks: [...(oldData.tasks || []), newTask],
+                    tasks: [...(oldData.tasks || []), newTask].sort((a: Task, b: Task) => {
+                        const priorityOrder: Record<string, number> = { urgent: 2, important: 1, normal: 0 };
+                        return (priorityOrder[b.priority as string] ?? 0) - (priorityOrder[a.priority as string] ?? 0);
+                    }),
                 };
             });
         },

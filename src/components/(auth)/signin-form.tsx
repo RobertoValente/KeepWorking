@@ -5,11 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
 
     return (
         <div className="flex flex-col gap-6">

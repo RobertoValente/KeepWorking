@@ -15,6 +15,9 @@ export const Query = {
                     eq(project.isValid, 1),
                     eq(project.userId, userId)
                 )
+            )
+            .orderBy(
+                desc(project.createdAt)
             );
     },
 
@@ -30,12 +33,26 @@ export const Query = {
                     eq(project.userId, userId),
                     eq(project.isValid, 1)
                 )
-            ).then((rows) => {
+            )
+            .then((rows) => {
                 if (!rows.length) return null;
 
                 const projectData = rows[0].project;
-                const tasks = rows.map(row => row.task).filter((task): task is Exclude<typeof task, null> => task !== null);
-                const notes = rows.map(row => row.note).filter((note): note is Exclude<typeof note, null> => note !== null);
+                
+                const priorityOrder: Record<string, number> = { urgent: 0, important: 1, normal: 2 };
+                const tasks = rows
+                    .map(row => row.task)
+                    .filter((task): task is Exclude<typeof task, null> => task !== null)
+                    .filter((task, idx, arr) => arr.findIndex(t => t.id === task.id) === idx)
+                    .sort((a, b) => {
+                        return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                    });
+                
+                const notes = rows
+                    .map(row => row.note)
+                    .filter((note): note is Exclude<typeof note, null> => note !== null)
+                    .filter((note, idx, arr) => arr.findIndex(n => n.id === note.id) === idx)
+                    .sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
 
                 return {
                     ...projectData,

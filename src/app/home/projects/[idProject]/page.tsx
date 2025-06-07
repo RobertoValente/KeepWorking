@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetProjectById } from "@/hooks/use-project";
-import { CircleDot, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Note, Task } from "@/lib/drizzle/type";
@@ -198,9 +198,11 @@ export default function ProjectPage() {
                                                     <div
                                                         key={note.id}
                                                         className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
+                                                        style={{
+                                                            borderColor: note.isPinned ? '#f9cc21' : undefined,
+                                                        }}
                                                     >
                                                         <div className="flex items-center gap-3 w-full">
-                                                            {note.isPinned && (<CircleDot className="!size-3 text-yellow-500 fill-yellow-500" />)}
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
                                                                 <h3 className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
                                                                     {note.content}

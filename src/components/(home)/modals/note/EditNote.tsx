@@ -4,7 +4,6 @@ import { CircleDot } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { useUpdateNote } from "@/hooks/use-note";
@@ -93,7 +92,7 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
                                     No
                                 </SelectItem>
                                 <SelectItem value="1">
-                                    <CircleDot className="!size-3"  color="orange" fill="orange" />
+                                    <CircleDot className="!size-3"  color="#f9cc21" fill="#f9cc21" />
                                     Yes
                                 </SelectItem>
                             </SelectContent>
