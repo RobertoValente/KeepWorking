@@ -62,7 +62,7 @@ export const Query = {
         return newProject;
     },
 
-    updateProject: async function(projectId: string, userId: string, updates: Partial<Project>): Promise<void> {
+    updateProject: async function(userId: string, projectId: string, updates: Partial<Project>): Promise<void> {
         await db
             .update(project)
             .set(updates)

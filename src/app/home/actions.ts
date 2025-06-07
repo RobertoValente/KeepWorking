@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { Query } from "@/lib/drizzle/query";
+import { Project } from "@/lib/drizzle/type";
 
 export const getProjects = async (userId: string) => {
     const session = await getUserSession();
@@ -33,13 +34,13 @@ export const createProject = async (userId: string) => {
     return project;
 }
 
-export const updateProject = async (projectId: string, userId: string, data: { name?: string; description?: string; color?: string }) => {
+export const updateProject = async (userId: string, updatedProject: Project) => {
     const session = await getUserSession();
     
     if(!session || !session?.user) throw new Error("User not authenticated!");
     if(session.user.id !== userId) throw new Error("UserId and SessionUserId are different!");
 
-    const project = await Query.updateProject(projectId, userId, data);
+    const project = await Query.updateProject(userId, updatedProject.id, updatedProject);
     return project;
 }
 

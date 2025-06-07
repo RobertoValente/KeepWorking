@@ -1,5 +1,8 @@
 "use client"
 
+import EditProjectModal from "@/components/(home)/modals/project/EditProject";
+import DeleteProjectModal from "@/components/(home)/modals/project/DeleteProject";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetProjectById } from "@/hooks/use-project";
 import { CircleDot, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 function formatDate(date: Date | string | undefined): string {
     if (!date) return "Unknown date";
@@ -23,12 +27,15 @@ function formatDate(date: Date | string | undefined): string {
 
 export default function ProjectPage() {
     const params = useParams();
+
+    const [editProject, setEditProject] = useState(false);
+    const [deleteProject, setDeleteProject] = useState(false);
     
     const { data: project, isLoading, error, isError } = useGetProjectById(params.idProject as string);
     if(isError) console.error("Error loading projects:", error);
 
     return (
-        <>
+        <>  
             {isLoading ? (
                 <div className="flex items-center justify-center h-full">
                     <Loader2 className="size-4 animate-spin m-auto mt-2" />
@@ -47,10 +54,16 @@ export default function ProjectPage() {
                     <div id="project-details">
                         <div className="flex items-center justify-start gap-2 mb-4">
                             <h1 className="text-4xl font-bold mr-2">{project.name}</h1>
-                            <Button variant="outline" size="icon" className="cursor-pointer hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950 transition-colors">
+                            <Button
+                                variant="outline" size="icon" className="cursor-pointer hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950 transition-colors"
+                                onClick={() => setEditProject(true)}
+                            >
                                 <Pencil className="size-4 text-yellow-500 dark:text-yellow-400" />
                             </Button>
-                            <Button variant="outline" size="icon" className="cursor-pointer hover:border-red-400 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors">
+                            <Button
+                                onClick={() => setDeleteProject(true)}
+                                variant="outline" size="icon" className="cursor-pointer hover:border-red-400 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                            >
                                 <Trash2 className="size-4 text-red-500 dark:text-red-400" />
                             </Button>
                         </div>
@@ -201,13 +214,18 @@ export default function ProjectPage() {
                                 </Card>
                             </TabsContent>
                         </Tabs>
-                        
-                        {/*<Button className="cursor-pointer" variant={"outline"} size="icon">
-                            <CircleCheckBig className="size-4" />
-                        </Button>
-                        <Button className="cursor-pointer" variant={"outline"} size="icon">
-                            <ClipboardPen className="size-4" />
-                        </Button>*/}
+
+                        <EditProjectModal
+                            isOpen={editProject}
+                            onOpenChange={setEditProject}
+                            project={project}
+                        />
+
+                        <DeleteProjectModal
+                            isOpen={deleteProject}
+                            onOpenChange={setDeleteProject}
+                            project={project}
+                        />
                     </div>
                 </>
             )}

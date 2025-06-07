@@ -24,8 +24,8 @@ function getHexCode(color: string | undefined) {
 }
 
 export function SidebarMain() {
-    const {data, isPending} = useSession();
     const pathname = usePathname();
+    const {data, isPending} = useSession();
     const createProject = useCreateProject();
 
     function handleNewProject() {
