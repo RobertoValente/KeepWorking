@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/drizzle/index";
 import { user, project, task, note } from "@/lib/drizzle/schema";
-import { User, Project, ProjectWithTasksAndNotes } from "@/lib/drizzle/type";
+import { User, Project, ProjectWithTasksAndNotes, Task } from "@/lib/drizzle/type";
 import { and, eq, desc } from "drizzle-orm";
 
 export const Query = {
@@ -84,6 +84,25 @@ export const Query = {
                     eq(project.userId, userId)
                 )
             );
+    },
+
+    createTask: async function(newTask: Omit<Task, 'id'>): Promise<Task> {
+        const taskWithId: Task = {
+            ...newTask,
+            id: crypto.randomUUID(),
+        };
+
+        await db
+            .insert(task)
+            .values(taskWithId);
+        
+        const insertedTask = await db
+            .select()
+            .from(task)
+            .where(eq(task.id, taskWithId.id))
+            .then(rows => rows[0]);
+
+        return insertedTask;
     },
 
     getUsers: async function(): Promise<User[]> {

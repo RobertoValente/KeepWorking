@@ -2,6 +2,7 @@
 
 import EditProjectModal from "@/components/(home)/modals/project/EditProject";
 import DeleteProjectModal from "@/components/(home)/modals/project/DeleteProject";
+import CreateTaskModal from "@/components/(home)/modals/task/CreateTask";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
@@ -13,9 +14,14 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 function formatDate(date: Date | string | undefined): string {
-    if (!date) return "Unknown date";
+    if (!date) return null as unknown as string;
+    
     if (typeof date === 'string') {
         date = new Date(date);
+    }
+
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+        return null as unknown as string;
     }
     
     return new Intl.DateTimeFormat('en-US', {
@@ -30,6 +36,7 @@ export default function ProjectPage() {
 
     const [editProject, setEditProject] = useState(false);
     const [deleteProject, setDeleteProject] = useState(false);
+    const [createTask, setCreateTask] = useState(false);
     
     const { data: project, isLoading, error, isError } = useGetProjectById(params.idProject as string);
     if(isError) console.error("Error loading projects:", error);
@@ -90,7 +97,7 @@ export default function ProjectPage() {
                                 <Card className="w-full p-2">
                                     <CardHeader className="p-2">
                                         <CardDescription>
-                                            <Button className="cursor-pointer w-full" variant="outline">
+                                            <Button onClick={() => setCreateTask(true)} className="cursor-pointer w-full" variant="outline">
                                                 <Plus className="size-4" />
                                             </Button>
                                         </CardDescription>
@@ -117,14 +124,15 @@ export default function ProjectPage() {
                                                             <CircleDot
                                                                 className="!size-3"
                                                                 style={{
-                                                                    color: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'orange' : 'green',
-                                                                    fill: task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'orange' : 'green'
+                                                                    color: task.priority === 'urgent' ? 'red' : task.priority === 'important' ? 'orange' : 'green',
+                                                                    fill: task.priority === 'urgent' ? 'red' : task.priority === 'important' ? 'orange' : 'green'
                                                                 }}
                                                             />
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
                                                                 <h3 className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
                                                                     {task.content}
                                                                 </h3>
+                                                                
                                                                 {task.dueDate && (
                                                                     <div className="flex items-center gap-2 mt-1">
                                                                         <span className="text-xs text-gray-500 dark:text-gray-400">Complete until: {formatDate(task.dueDate)}</span>
@@ -225,6 +233,12 @@ export default function ProjectPage() {
                             isOpen={deleteProject}
                             onOpenChange={setDeleteProject}
                             project={project}
+                        />
+
+                        <CreateTaskModal
+                            isOpen={createTask}
+                            onOpenChange={setCreateTask}
+                            projectId={project.id}
                         />
                     </div>
                 </>

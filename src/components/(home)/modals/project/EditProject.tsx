@@ -27,11 +27,11 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
     const [color, setColor] = useState(project.color || "blue");
 
     const handleSave = (updatedProject: { name: string; description: string; color: string }) => {
-        if(isPending) return toast.error("Please wait, session is loading");
-        if(!data?.user?.id) return toast.error("User ID is not available");
+        if(isPending) return toast.error("Please wait, session is loading!");
+        if(!data?.user?.id) return toast.error("User ID is not available!");
 
-        if(!name.trim()) return toast.error("Project name is required");
-        if(!color) return toast.error("Project color is required");
+        if(!name.trim()) return toast.error("Project name is required!");
+        if(!color) return toast.error("Project color is required!");
 
         updateProject.mutate({
             userId: data.user.id,
@@ -67,6 +67,7 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="w-full"
+                            required
                         />
                     </div>
                     
@@ -85,6 +86,7 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
                         <Select
                             value={color}
                             onValueChange={(value) => setColor(value)}
+                            required
                         >
                             <SelectTrigger className="w-full cursor-pointer">
                                 <SelectValue placeholder="Select a color" />

@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { Query } from "@/lib/drizzle/query";
-import { Project } from "@/lib/drizzle/type";
+import { Project, Task } from "@/lib/drizzle/type";
 
 export const getProjects = async (userId: string) => {
     const session = await getUserSession();
@@ -52,6 +52,19 @@ export const deleteProject = async (projectId: string, userId: string) => {
 
     const project = await Query.deleteProject(projectId, userId);
     return project;
+}
+
+export const createTask = async (userId: string, newTask: Omit<Task, 'id'>) => {
+    const session = await getUserSession();
+
+    if(!session || !session?.user) throw new Error("User not authenticated!");
+    if(session.user.id !== userId) throw new Error("UserId and SessionUserId are different!");
+
+    const project = await Query.getProjectById(newTask.projectId, userId);
+    if(!project) throw new Error("Project not found or you do not have access to it!");
+
+    const task = await Query.createTask(newTask);
+    return task;
 }
 
 async function getUserSession() {
