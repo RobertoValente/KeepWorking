@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useDeleteProject } from "@/hooks/use-project";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth/client";
+import { useRouter } from "next/navigation";
 
 type Props = {
     isOpen: boolean;
@@ -16,6 +17,7 @@ type Props = {
 export default function DeleteProjectModal({ isOpen, onOpenChange, project }: Props) {
     const {data, isPending} = useSession();
     const deleteProject = useDeleteProject();
+    const router = useRouter();
 
     const handleDelete = () => {
         if (isPending) return toast.error("Please wait, session is loading!");
@@ -28,6 +30,7 @@ export default function DeleteProjectModal({ isOpen, onOpenChange, project }: Pr
             onSuccess: () => {
                 toast.success("Project deleted successfully!");
                 onOpenChange(false);
+                router.push('/home');
             },
             onError: (error) => {
                 console.error("Error deleting project:", error);
