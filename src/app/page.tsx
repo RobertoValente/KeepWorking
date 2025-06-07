@@ -26,7 +26,7 @@ export default function Home() {
                     <a href="/sign-in">Sign In</a>
                 </Button>
                 <Button variant={"link"} className="cursor-pointer">
-                    <a href="/sign-up">Sign Up</a>
+                    <a href="/home">Home</a>
                 </Button>
                 { session && (
                     <Button
