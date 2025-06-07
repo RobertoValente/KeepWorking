@@ -67,7 +67,7 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle className="text-3xl">Create Task</DialogTitle>
+                    <DialogTitle className="text-3xl">Edit Task</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                     <div className="space-y-2">

@@ -2,40 +2,40 @@
 
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useDeleteTask } from "@/hooks/use-task";
+import { useDeleteNote } from "@/hooks/use-note";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth/client";
-import { Task } from "@/lib/drizzle/type";
+import { Note } from "@/lib/drizzle/type";
 
 type Props = {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     projectId: string;
-    task: Task;
+    note: Note;
 }
 
-export default function DeleteTaskModal({ isOpen, onOpenChange, projectId, task }: Props) {
+export default function DeleteNoteModal({ isOpen, onOpenChange, projectId, note }: Props) {
     const {data, isPending} = useSession();
-    const deleteTask = useDeleteTask();
+    const deleteNote = useDeleteNote();
 
     const handleDelete = () => {
         if (isPending) return toast.error("Please wait, session is loading!");
         if (!data?.user?.id) return toast.error("User ID is not available!");
 
-        if (!projectId || !task.id) return toast.error("Project ID and Task ID are required!");
+        if (!projectId || !note.id) return toast.error("Project ID and Note ID are required!");
 
-        deleteTask.mutate({
-            taskId: task.id,
+        deleteNote.mutate({
+            noteId: note.id,
             projectId,
             userId: data.user.id
         }, {
             onSuccess: () => {
-                toast.success("Task deleted successfully!");
+                toast.success("Note deleted successfully!");
                 onOpenChange(false);
             },
             onError: (error) => {
-                console.error("Error deleting task:", error);
-                toast.error("Failed to delete task!");
+                console.error("Error deleting note:", error);
+                toast.error("Failed to delete note!");
             }
         });
     }
@@ -44,10 +44,10 @@ export default function DeleteTaskModal({ isOpen, onOpenChange, projectId, task 
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle className="text-3xl">Delete Task</DialogTitle>
+                    <DialogTitle className="text-3xl">Delete Note</DialogTitle>
                 </DialogHeader>
                 <div className="py-4">
-                    Are you sure you want to delete the task? This action cannot be undone.
+                    Are you sure you want to delete the note? This action cannot be undone.
                 </div>
                 <DialogFooter>
                     <Button
