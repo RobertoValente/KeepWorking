@@ -96,7 +96,7 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
                                     <CircleDot className="!size-3"  color="#f14445" fill="#f14445" />
                                     Red
                                 </SelectItem>
-                                <SelectItem value="emerald">
+                                <SelectItem value="green">
                                     <CircleDot className="!size-3"  color="#15ba81" fill="#15ba81" />
                                     Green
                                 </SelectItem>

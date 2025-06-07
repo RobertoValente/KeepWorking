@@ -13,7 +13,7 @@ import { toast } from "sonner";
 function getHexCode(color: string | undefined) {
     const ColorHex = {
         "red": "#f14445",
-        "emerald": "#15ba81",
+        "green": "#20c45f",
         "blue": "#3a81f6",
         "orange": "#f87103",
         "yellow": "#f9cc21",

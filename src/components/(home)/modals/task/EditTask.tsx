@@ -86,7 +86,7 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
                         <Select
                             defaultValue={priority}
                             value={priority}
-                            onValueChange={(value) => setPriority(value)}
+                            onValueChange={(value) => setPriority(value.toLowerCase())}
                             required
                         >
                             <SelectTrigger className="w-full cursor-pointer">

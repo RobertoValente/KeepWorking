@@ -79,7 +79,7 @@ export default function CreateTaskModal({ isOpen, onOpenChange, projectId }: Pro
                         <Select
                             defaultValue={priority}
                             value={priority}
-                            onValueChange={(value) => setPriority(value)}
+                            onValueChange={(value) => setPriority(value.toLowerCase())}
                             required
                         >
                             <SelectTrigger className="w-full cursor-pointer">

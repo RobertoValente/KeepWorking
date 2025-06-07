@@ -119,21 +119,18 @@ export default function ProjectPage() {
                                                 {project.tasks.map(task => (
                                                     <div
                                                         key={task.id}
-                                                        className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
+                                                        className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border-2 dark:border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
+                                                        style={{
+                                                            borderColor: task.priority === 'urgent' ? '#f14445' : task.priority === 'important' ? '#f87103' : '#20c45f',
+                                                        }}
                                                     >
                                                         <div className="flex items-center gap-3 w-full">
                                                             <Checkbox
                                                                 id={`task-${task.id}`}
                                                                 checked={!!task.isDone}
                                                                 onChange={() => alert(`Toggle done for task: ${task.content}`)}
-                                                                className="cursor-pointer size-5 "
-                                                            />
-                                                            <CircleDot
-                                                                className="!size-3"
-                                                                style={{
-                                                                    color: task.priority === 'urgent' ? 'red' : task.priority === 'important' ? 'orange' : 'green',
-                                                                    fill: task.priority === 'urgent' ? 'red' : task.priority === 'important' ? 'orange' : 'green'
-                                                                }}
+                                                                className="cursor-pointer size-5"
+                                                                title="Mark task as done"
                                                             />
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
                                                                 <h3 className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
