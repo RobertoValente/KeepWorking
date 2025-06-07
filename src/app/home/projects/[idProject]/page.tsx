@@ -3,6 +3,8 @@
 import EditProjectModal from "@/components/(home)/modals/project/EditProject";
 import DeleteProjectModal from "@/components/(home)/modals/project/DeleteProject";
 import CreateTaskModal from "@/components/(home)/modals/task/CreateTask";
+import EditTaskModal from "@/components/(home)/modals/task/EditTask";
+import DeleteTaskModal from "@/components/(home)/modals/task/DeleteTask";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
@@ -12,6 +14,7 @@ import { useGetProjectById } from "@/hooks/use-project";
 import { CircleDot, Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { Task } from "@/lib/drizzle/type";
 
 function formatDate(date: Date | string | undefined): string {
     if (!date) return null as unknown as string;
@@ -36,7 +39,11 @@ export default function ProjectPage() {
 
     const [editProject, setEditProject] = useState(false);
     const [deleteProject, setDeleteProject] = useState(false);
+
     const [createTask, setCreateTask] = useState(false);
+    const [updateTask, setUpdateTask] = useState(false);
+    const [deleteTask, setDeleteTask] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     
     const { data: project, isLoading, error, isError } = useGetProjectById(params.idProject as string);
     if(isError) console.error("Error loading projects:", error);
@@ -140,7 +147,7 @@ export default function ProjectPage() {
                                                                 )}
                                                             </div>
                                                             <Button
-                                                                onClick={() => alert(`Edit task: ${task.content}`)}
+                                                                onClick={() => {setSelectedTask(task); setUpdateTask(true)}}
                                                                 className="cursor-pointer"
                                                                 variant={"outline"}
                                                                 size={"icon"}
@@ -149,7 +156,7 @@ export default function ProjectPage() {
                                                                 <Pencil className="size-4 text-yellow-500 dark:text-yellow-400" />
                                                             </Button>
                                                             <Button
-                                                                onClick={() => alert(`Delete task: ${task.content}`)}
+                                                                onClick={() => {setSelectedTask(task); setDeleteTask(true)}}
                                                                 className="cursor-pointer"
                                                                 variant={"outline"}
                                                                 size={"icon"}
@@ -239,6 +246,19 @@ export default function ProjectPage() {
                             isOpen={createTask}
                             onOpenChange={setCreateTask}
                             projectId={project.id}
+                        />
+
+                        <EditTaskModal
+                            isOpen={updateTask}
+                            onOpenChange={setUpdateTask}
+                            task={selectedTask as Task}
+                        />
+
+                        <DeleteTaskModal
+                            isOpen={deleteTask}
+                            onOpenChange={setDeleteTask}
+                            projectId={project.id}
+                            task={selectedTask as Task}
                         />
                     </div>
                 </>

@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/drizzle/index";
 import { user, project, task, note } from "@/lib/drizzle/schema";
-import { User, Project, ProjectWithTasksAndNotes, Task } from "@/lib/drizzle/type";
+import { User, Project, ProjectWithTasksAndNotes, Task, Note } from "@/lib/drizzle/type";
 import { and, eq, desc } from "drizzle-orm";
 
 export const Query = {
@@ -103,6 +103,51 @@ export const Query = {
             .then(rows => rows[0]);
 
         return insertedTask;
+    },
+
+    updateTask: async function(taskId: string, updates: Partial<Task>): Promise<void> {
+        await db
+            .update(task)
+            .set(updates)
+            .where(eq(task.id, taskId));
+    },
+
+    deleteTask: async function(taskId: string): Promise<void> {
+        await db
+            .delete(task)
+            .where(eq(task.id, taskId));
+    },
+
+    createNote: async function(newNote: Omit<Note, 'id'>): Promise<Note> {
+        const noteWithId: Note = {
+            ...newNote,
+            id: crypto.randomUUID(),
+        };
+
+        await db
+            .insert(note)
+            .values(noteWithId);
+
+        const insertedNote = await db
+            .select()
+            .from(note)
+            .where(eq(note.id, noteWithId.id))
+            .then(rows => rows[0]);
+        
+        return insertedNote;
+    },
+
+    updateNote: async function(noteId: string, updates: Partial<Note>): Promise<void> {
+        await db
+            .update(note)
+            .set(updates)
+            .where(eq(note.id, noteId));
+    },
+
+    deleteNote: async function(noteId: string): Promise<void> {
+        await db
+            .delete(note)
+            .where(eq(note.id, noteId));
     },
 
     getUsers: async function(): Promise<User[]> {

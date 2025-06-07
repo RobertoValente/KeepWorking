@@ -1,8 +1,8 @@
 import { Task } from '@/lib/drizzle/type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createTask } from '@/app/home/actions';
+import { createTask, updateTask, deleteTask } from '@/app/home/actions';
 
-export const useCreateTask = () => {
+export function useCreateTask() {
     const queryClient = useQueryClient();
 
     return useMutation({
@@ -20,31 +20,38 @@ export const useCreateTask = () => {
     });
 }
 
-/*export function useUpdateProject() {
+export function useUpdateTask() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({userId, updatedProject} :  { userId: string, updatedProject: Project }) => updateProject(userId, updatedProject),
-        onSuccess: (nullValueIdkWhy, variables) => {
-            queryClient.invalidateQueries({ queryKey: ['projects', variables.userId] });
-            queryClient.setQueryData(['projects', variables.userId], (oldData: Project[]) => {
-                return oldData?.map(project => project.id === variables.updatedProject.id ? variables.updatedProject : project) || [];
-            });
-            queryClient.setQueryData(['project', variables.updatedProject.id], variables.updatedProject);
-        }
-    });
-}
-
-export function useDeleteProject() {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: ({ projectId, userId }: { projectId: string; userId: string }) => deleteProject(projectId, userId),
-        onSuccess: (deletedProject, variables) => {
-            queryClient.invalidateQueries({ queryKey: ['projects', variables.userId] });
-            queryClient.setQueryData(['projects', variables.userId], (oldData: Project[]) => {
-                return oldData?.filter(project => project.id !== variables.projectId) || [];
+        mutationFn: ({userId, updatedTask} : { userId: string, updatedTask: Task }) => updateTask(userId, updatedTask),
+        onSuccess: (updatedTask, variables) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            queryClient.setQueryData(['project', variables.updatedTask.projectId], (oldData: any) => {
+                if (!oldData) return null;
+                return {
+                    ...oldData,
+                    tasks: oldData.tasks?.map((task: Task) => task.id === variables.updatedTask.id ? variables.updatedTask : task) || [],
+                };
             });
         },
     });
-}*/
+}
+
+export function useDeleteTask() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({taskId, projectId, userId} : { taskId: string, projectId: string, userId: string }) => deleteTask(userId, projectId, taskId),
+        onSuccess: (taskId, variables) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            queryClient.setQueryData(['project', variables.projectId], (oldData: any) => {
+                if (!oldData) return null;
+                return {
+                    ...oldData,
+                    tasks: oldData.tasks?.filter((task: Task) => task.id !== variables.taskId) || [],
+                };
+            });
+        },
+    });
+}
