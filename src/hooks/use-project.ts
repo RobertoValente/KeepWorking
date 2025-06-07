@@ -13,7 +13,19 @@ export const useGetProjects = (userId: string) => {
 export const useGetProjectById = (projectId: string) => {
     return useQuery({
         queryKey: ['project', projectId],
-        queryFn: async () => getProjectById(projectId),
+        queryFn: async () => {
+            const project = await getProjectById(projectId);
+            if (project && Array.isArray(project.tasks)) {
+                const priorityOrder: Record<string, number> = { urgent: 0, important: 1, normal: 2 };
+                project.tasks = project.tasks.sort((a, b) => {
+                    if ((a.isDone ?? 0) !== (b.isDone ?? 0)) {
+                        return (a.isDone ?? 0) - (b.isDone ?? 0);
+                    }
+                    return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                });
+            }
+            return project;
+        },
         enabled: !!projectId,
     });
 }

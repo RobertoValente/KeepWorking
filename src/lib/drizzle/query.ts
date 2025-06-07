@@ -45,6 +45,7 @@ export const Query = {
                     .filter((task): task is Exclude<typeof task, null> => task !== null)
                     .filter((task, idx, arr) => arr.findIndex(t => t.id === task.id) === idx)
                     .sort((a, b) => {
+                        if ((a.isDone ?? 0) !== (b.isDone ?? 0)) return (a.isDone ?? 0) - (b.isDone ?? 0);
                         return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
                     });
                 
@@ -132,6 +133,13 @@ export const Query = {
     deleteTask: async function(taskId: string): Promise<void> {
         await db
             .delete(task)
+            .where(eq(task.id, taskId));
+    },
+
+    setIsDoneTask: async function(taskId: string, isDoneNow: number): Promise<void> {
+        await db
+            .update(task)
+            .set({ isDone: isDoneNow })
             .where(eq(task.id, taskId));
     },
 

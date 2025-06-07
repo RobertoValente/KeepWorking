@@ -1,9 +1,10 @@
 import { Task } from '@/lib/drizzle/type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createTask, updateTask, deleteTask } from '@/app/home/actions';
+import { createTask, updateTask, deleteTask, isDoneTask } from '@/app/home/actions';
 
 export function useCreateTask() {
     const queryClient = useQueryClient();
+    const priorityOrder: Record<string, number> = { urgent: 0, important: 1, normal: 2 };
 
     return useMutation({
         mutationFn: ({userId, newTask} : { userId: string, newTask: Omit<Task, 'id'> }) => createTask(userId, newTask),
@@ -14,8 +15,8 @@ export function useCreateTask() {
                 return {
                     ...oldData,
                     tasks: [...(oldData.tasks || []), newTask].sort((a: Task, b: Task) => {
-                        const priorityOrder: Record<string, number> = { urgent: 2, important: 1, normal: 0 };
-                        return (priorityOrder[b.priority as string] ?? 0) - (priorityOrder[a.priority as string] ?? 0);
+                        if ((a.isDone ?? 0) !== (b.isDone ?? 0)) return (a.isDone ?? 0) - (b.isDone ?? 0);
+                        return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
                     }),
                 };
             });
@@ -53,6 +54,33 @@ export function useDeleteTask() {
                 return {
                     ...oldData,
                     tasks: oldData.tasks?.filter((task: Task) => task.id !== variables.taskId) || [],
+                };
+            });
+        },
+    });
+}
+
+export function useIsDoneTask() {
+    const queryClient = useQueryClient();
+    const priorityOrder: Record<string, number> = { urgent: 0, important: 1, normal: 2 };
+
+    return useMutation({
+        mutationFn: ({changedIsDoneTask} : { changedIsDoneTask: Task}) => isDoneTask(changedIsDoneTask),
+        onSuccess: (updatedTask, variables) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            queryClient.setQueryData(['project', variables.changedIsDoneTask.projectId], (oldData: any) => {
+                if (!oldData) return null;
+
+                const updatedTasks = oldData.tasks?.map((task: Task) =>
+                    task.id === variables.changedIsDoneTask.id ? variables.changedIsDoneTask : task
+                ) || [];
+
+                return {
+                    ...oldData,
+                    tasks: updatedTasks.sort((a: Task, b: Task) => {
+                        if ((a.isDone ?? 0) !== (b.isDone ?? 0)) return (a.isDone ?? 0) - (b.isDone ?? 0);
+                        return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                    }),
                 };
             });
         },

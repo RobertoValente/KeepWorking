@@ -8,6 +8,7 @@ import DeleteTaskModal from "@/components/(home)/modals/task/DeleteTask";
 import CreateNoteModal from "@/components/(home)/modals/note/CreateNote";
 import EditNoteModal from "@/components/(home)/modals/note/EditNote";
 import DeleteNoteModal from "@/components/(home)/modals/note/DeleteNote";
+import { useIsDoneTask } from "@/hooks/use-task";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import { Loader2, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Note, Task } from "@/lib/drizzle/type";
+import { toast } from "sonner";
 
 function formatDate(date: Date | string | undefined): string {
     if (!date) return null as unknown as string;
@@ -39,6 +41,7 @@ function formatDate(date: Date | string | undefined): string {
 
 export default function ProjectPage() {
     const params = useParams();
+    const changeIsDoneTask = useIsDoneTask();
 
     const [editProject, setEditProject] = useState(false);
     const [deleteProject, setDeleteProject] = useState(false);
@@ -52,6 +55,22 @@ export default function ProjectPage() {
     const [updateNote, setUpdateNote] = useState(false);
     const [deleteNote, setDeleteNote] = useState(false);
     const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+
+    const handleIsDoneTask = (changedIsDoneTask: Task) => {
+        changedIsDoneTask.isDone = changedIsDoneTask.isDone === 1 ? 0 : 1;
+
+        changeIsDoneTask.mutate({
+            changedIsDoneTask: changedIsDoneTask,
+        }, {
+            onSuccess: () => {
+                toast.success(`Task marked as ${changedIsDoneTask.isDone ? 'done' : 'not done'} successfully!`);
+            },
+            onError: (error) => {
+                console.error("Error updating task status:", error);
+                toast.error(`Failed to mark task as ${changedIsDoneTask.isDone ? 'done' : 'not done'}`);
+            }
+        }
+    )};
     
     const { data: project, isLoading, error, isError } = useGetProjectById(params.idProject as string);
     if(isError) console.error("Error loading projects:", error);
@@ -135,8 +154,8 @@ export default function ProjectPage() {
                                                         <div className="flex items-center gap-3 w-full">
                                                             <Checkbox
                                                                 id={`task-${task.id}`}
-                                                                checked={!!task.isDone}
-                                                                onChange={() => alert(`Toggle done for task: ${task.content}`)}
+                                                                checked={task.isDone === 1}
+                                                                onClick={() => handleIsDoneTask(task)}
                                                                 className="cursor-pointer size-5"
                                                                 title="Mark task as done"
                                                             />

@@ -93,6 +93,18 @@ export const deleteTask = async (userId: string, projectId: string, taskId: stri
     return deletedTask;
 }
 
+export const isDoneTask = async (changedIsDoneTask: Task) => {
+    const session = await getUserSession();
+
+    if(!session || !session?.user) throw new Error("User not authenticated!");
+
+    const project = await Query.getProjectById(changedIsDoneTask.projectId, session.user.id);
+    if(!project) throw new Error("Project not found or you do not have access to it!");
+
+    const updatedTask = await Query.setIsDoneTask(changedIsDoneTask.id, changedIsDoneTask.isDone ? 1 : 0);
+    return updatedTask;
+}
+
 export const createNote = async (userId: string, newNote: Omit<Note, 'id'>) => {
     const session = await getUserSession();
 
