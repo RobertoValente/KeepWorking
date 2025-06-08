@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/sonner";
 import { AppContextProvider } from "@/components/(home)/layout/app-context-provider"
 import { SidebarHeader } from "@/components/(home)/layout/sidebar-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -28,7 +27,6 @@ export default async function DashboardLayout({
                         <div className="@container/main flex flex-1 flex-col gap-2">
                             <div className="flex flex-col gap-4 p-2 md:gap-6 md:p-6">
                                 {children}
-                                <Toaster richColors closeButton theme="system" />
                             </div>
                         </div>
                     </div>
