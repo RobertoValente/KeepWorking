@@ -62,9 +62,6 @@ export default function ProjectPage() {
         changeIsDoneTask.mutate({
             changedIsDoneTask: changedIsDoneTask,
         }, {
-            onSuccess: () => {
-                toast.success(`Task marked as ${changedIsDoneTask.isDone ? 'done' : 'not done'} successfully!`);
-            },
             onError: (error) => {
                 console.error("Error updating task status:", error);
                 toast.error(`Failed to mark task as ${changedIsDoneTask.isDone ? 'done' : 'not done'}`);
@@ -128,6 +125,7 @@ export default function ProjectPage() {
                                 <TabsTrigger value="notes" className="cursor-pointer">Notes</TabsTrigger>
                             </TabsList>
                             <TabsContent value="tasks">
+                                {/*<Card className="w-full p-2 border-0 shadow-none">*/}
                                 <Card className="w-full p-2">
                                     <CardHeader className="p-2">
                                         <CardDescription>
@@ -146,23 +144,24 @@ export default function ProjectPage() {
                                                 {project.tasks.map(task => (
                                                     <div
                                                         key={task.id}
-                                                        className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border-2 dark:border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
-                                                        style={{
-                                                            borderColor: task.priority === 'urgent' ? '#f14445' : task.priority === 'important' ? '#f87103' : '#20c45f',
-                                                        }}
+                                                        className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
                                                     >
                                                         <div className="flex items-center gap-3 w-full">
                                                             <Checkbox
                                                                 id={`task-${task.id}`}
                                                                 checked={task.isDone === 1}
                                                                 onClick={() => handleIsDoneTask(task)}
-                                                                className="cursor-pointer size-5"
+                                                                className="cursor-pointer size-5 border-2"
                                                                 title="Mark task as done"
+                                                                style={{
+                                                                    borderColor: task.priority === 'urgent' ? '#f14445' : task.priority === 'important' ? '#f87103' : '#20c45f',
+                                                                    backgroundColor: task.priority === 'urgent' && task.isDone ? '#f14445' : task.priority === 'important'  && task.isDone ? '#f87103' : task.priority === "normal"  && task.isDone ? '#20c45f' : undefined,
+                                                                }}
                                                             />
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
-                                                                <h3 className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
+                                                                <span className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
                                                                     {task.content}
-                                                                </h3>
+                                                                </span>
                                                                 
                                                                 {task.dueDate && (
                                                                     <div className="flex items-center gap-2 mt-1">
