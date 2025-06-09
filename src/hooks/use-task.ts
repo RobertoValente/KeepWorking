@@ -33,9 +33,14 @@ export function useUpdateTask() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             queryClient.setQueryData(['project', variables.updatedTask.projectId], (oldData: any) => {
                 if (!oldData) return null;
+                const priorityOrder: Record<string, number> = { urgent: 0, important: 1, normal: 2 };
+                const updatedTasks = oldData.tasks?.map((task: Task) => task.id === variables.updatedTask.id ? variables.updatedTask : task) || [];
                 return {
                     ...oldData,
-                    tasks: oldData.tasks?.map((task: Task) => task.id === variables.updatedTask.id ? variables.updatedTask : task) || [],
+                    tasks: updatedTasks.sort((a: Task, b: Task) => {
+                        if ((a.isDone ?? 0) !== (b.isDone ?? 0)) return (a.isDone ?? 0) - (b.isDone ?? 0);
+                        return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                    }),
                 };
             });
         },
