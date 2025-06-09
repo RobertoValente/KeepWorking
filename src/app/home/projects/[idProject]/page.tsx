@@ -56,6 +56,8 @@ export default function ProjectPage() {
     const [deleteNote, setDeleteNote] = useState(false);
     const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
+    const isAnyModalOpen = editProject || deleteProject || createTask || updateTask || deleteTask || createNote || updateNote || deleteNote;
+
     const handleIsDoneTask = (changedIsDoneTask: Task) => {
         changedIsDoneTask.isDone = changedIsDoneTask.isDone === 1 ? 0 : 1;
 
@@ -89,21 +91,9 @@ export default function ProjectPage() {
             ) : (
                 <>
                     {/*<ProjectDetails project={project} />*/}
-                    <div id="project-details">
+                    <div id="project-details" className={isAnyModalOpen ? "blur-xs transition-all" : "transition-all"}>
                         <div className="flex items-center justify-start gap-2 mb-4">
                             <h1 className="text-4xl font-bold mr-2">{project.name}</h1>
-                            <Button
-                                variant="outline" size="icon" className="cursor-pointer hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950 transition-colors"
-                                onClick={() => setEditProject(true)}
-                            >
-                                <Pencil className="size-4 text-yellow-500 dark:text-yellow-400" />
-                            </Button>
-                            <Button
-                                onClick={() => setDeleteProject(true)}
-                                variant="outline" size="icon" className="cursor-pointer hover:border-red-400 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
-                            >
-                                <Trash2 className="size-4 text-red-500 dark:text-red-400" />
-                            </Button>
                         </div>
                         <div className="text-base -mt-2">
                             {/*{project.description && ( <span>{project.description} <br /></span> )}*/}
@@ -112,9 +102,25 @@ export default function ProjectPage() {
                                 Created on {formatDate(project.createdAt)}
                             </span>
                         </div>
+                        <div className="flex items-center gap-2 mt-4">
+                            <Button
+                                variant="outline" className="cursor-pointer hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950 transition-colors"
+                                onClick={() => setEditProject(true)}
+                            >
+                                <Pencil className="size-4 text-yellow-500 dark:text-yellow-400" />
+                                Edit Project
+                            </Button>
+                            <Button
+                                onClick={() => setDeleteProject(true)}
+                                variant="outline" className="cursor-pointer hover:border-red-400 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                            >
+                                <Trash2 className="size-4 text-red-500 dark:text-red-400" />
+                                Delete Project
+                            </Button>
+                        </div>
                     </div>
 
-                    <div id="project-content" className="mt-4">
+                    <div id="project-content" className={`mt-4 ${isAnyModalOpen ? "blur-sm pointer-events-none select-none transition-all" : "transition-all"}`}>
                         <div className="mb-4">
                             <h2 className="text-2xl font-semibold">Project Details</h2>
                         </div>
