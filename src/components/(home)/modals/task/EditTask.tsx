@@ -38,7 +38,7 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
 
         if(!content.trim()) return toast.error("Task details is required!");
         if(!priority) return toast.error("Task priority is required!");
-        if(!dueDate) dueDate = null;
+        if(!dueDate || isNaN(dueDate.getDate())) dueDate = null;
 
         updateTask.mutate({
             userId: data.user.id,
@@ -46,15 +46,12 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
                 ...task,
                 content,
                 priority,
-                dueDate: dueDate ? new Date(dueDate) : null,
+                dueDate: dueDate,
             }
         }, {
             onSuccess: () => {
                 toast.success("Task updated successfully!");
                 onOpenChange(false);
-                setContent("");
-                setPriority("normal");
-                setDueDate("");
             },
             onError: (error) => {
                 console.error("Error updating task:", error);

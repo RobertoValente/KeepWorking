@@ -47,8 +47,6 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
             onSuccess: () => {
                 toast.success("Note updated successfully!");
                 onOpenChange(false);
-                setContent("");
-                setIsPinned(0);
             },
             onError: (error) => {
                 console.error("Error updating note:", error);
