@@ -34,6 +34,11 @@ export const Query = {
                     eq(project.isValid, 1)
                 )
             )
+            .orderBy(
+                desc(project.createdAt),
+                desc(task.createdAt),
+                desc(note.createdAt)
+            )
             .then((rows) => {
                 if (!rows.length) return null;
 
