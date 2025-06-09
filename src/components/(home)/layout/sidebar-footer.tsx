@@ -39,7 +39,7 @@ export function SidebarFooter() {
                         <Link href={"https://docs.google.com/document/d/1WIwUwPvxslJLO5uslRsDUAbsqJ5a0vN9rK5Wkp4RGbs/edit?tab=t.0"} target="_blank">
                             <Button
                                 variant="outline"
-                                className="w-full hover:cursor-pointer"
+                                className="w-full hover:cursor-pointer justify-start"
                             >
                                 <ExternalLink className="size-4" />
                                 🚀 Época Estágio
@@ -50,7 +50,7 @@ export function SidebarFooter() {
                         <Link href={"https://docs.google.com/document/d/1D9N3p33j0uiRuVCob-txz8dWlRaKjH4b-xBAWwIOndY/edit?tab=t.ioldll5tn8iu"} target="_blank">
                             <Button
                                 variant="outline"
-                                className="w-full hover:cursor-pointer"
+                                className="w-full hover:cursor-pointer justify-start"
                             >
                                 <ExternalLink className="size-4" />
                                 🧠 Cérebro
@@ -63,10 +63,10 @@ export function SidebarFooter() {
                 <Link href={"https://calendar.google.com/calendar/u/0/r"} target="_blank">
                     <Button
                         variant="outline"
-                        className="w-full hover:cursor-pointer"
+                        className="w-full hover:cursor-pointer justify-start"
                     >
                         <ExternalLink className="size-4" />
-                        Google Calendar
+                        📆 Google Calendar
                     </Button>
                 </Link>
             </SidebarMenuItem>
