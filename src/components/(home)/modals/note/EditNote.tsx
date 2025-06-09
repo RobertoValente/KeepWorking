@@ -1,6 +1,6 @@
 "use client"
 
-import { CircleDot } from "lucide-react";
+import { CircleDot, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
     const {data, isPending} = useSession();
     const updateNote = useUpdateNote();
 
+    const [isLoading, setIsLoading] = useState(false);
     const [content, setContent] = useState(note?.content || "");
     const [isPinned, setIsPinned] = useState(note?.isPinned || 0);
 
@@ -36,6 +37,7 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
 
         if(!content.trim()) return toast.error("Task details is required!");
 
+        setIsLoading(true);
         updateNote.mutate({
             userId: data.user.id,
             updatedNote: {
@@ -47,10 +49,12 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
             onSuccess: () => {
                 toast.success("Note updated successfully!");
                 onOpenChange(false);
+                setIsLoading(false);
             },
             onError: (error) => {
                 console.error("Error updating note:", error);
                 toast.error("Failed to update note!");
+                setIsLoading(false);
             }
         });
     }
@@ -69,6 +73,7 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="w-full max-h-18"
+                            disabled={isLoading}
                             required
                         />
                     </div>
@@ -79,6 +84,7 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
                             defaultValue={isPinned.toString()}
                             value={isPinned.toString()}
                             onValueChange={(value) => setIsPinned(value === "1" ? 1 : 0)}
+                            disabled={isLoading}
                             required
                         >
                             <SelectTrigger className="w-full cursor-pointer">
@@ -101,15 +107,17 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
                     <Button
                         className="cursor-pointer"
                         variant="outline"
+                        disabled={isLoading}
                         onClick={() => onOpenChange(false)}
                     >
                         Cancel
                     </Button>
                     <Button
                         className="cursor-pointer"
+                        disabled={isLoading}
                         onClick={() => handleEdit(content, isPinned)}
                     >
-                        Edit Note
+                        {isLoading ? (<><Loader2 className="animate-spin" /> {"Editing..."}</>) : "Edit Note"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

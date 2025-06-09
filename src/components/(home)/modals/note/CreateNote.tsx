@@ -1,15 +1,15 @@
 "use client"
 
-import { CircleDot } from "lucide-react";
+import { CircleDot, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { useCreateNote } from "@/hooks/use-note";
-import { toast } from "sonner";
-import { useSession } from "@/lib/auth/client";
 import { Textarea } from "@/components/ui/textarea";
+import { useCreateNote } from "@/hooks/use-note";
+import { useSession } from "@/lib/auth/client";
+import { useState } from "react";
+import { toast } from "sonner";
 
 type Props = {
     isOpen: boolean;
@@ -23,13 +23,15 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
 
     const [content, setContent] = useState("");
     const [isPinned, setIsPinned] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleCreate = (content: string, isPinned: number) => {
         if(isPending) return toast.error("Please wait, session is loading!");
         if(!data?.user?.id) return toast.error("User ID is not available!");
 
         if(!content.trim()) return toast.error("Note details is required!");
-
+        
+        setIsLoading(true);
         createNote.mutate({
             userId: data.user.id,
             newNote: {
@@ -43,10 +45,12 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
                 onOpenChange(false);
                 setContent("");
                 setIsPinned(0);
+                setIsLoading(false);
             },
             onError: (error) => {
                 console.error("Error creating note:", error);
                 toast.error("Failed to create note!");
+                setIsLoading(false);
             }
         });
     }
@@ -65,6 +69,7 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="w-full max-h-18"
+                            disabled={isLoading}
                             required
                         />
                     </div>
@@ -75,6 +80,7 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
                             defaultValue={isPinned.toString()}
                             value={isPinned.toString()}
                             onValueChange={(value) => setIsPinned(value === "1" ? 1 : 0)}
+                            disabled={isLoading}
                             required
                         >
                             <SelectTrigger className="w-full cursor-pointer">
@@ -97,15 +103,17 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
                     <Button
                         className="cursor-pointer"
                         variant="outline"
+                        disabled={isLoading}
                         onClick={() => onOpenChange(false)}
                     >
                         Cancel
                     </Button>
                     <Button
                         className="cursor-pointer"
+                        disabled={isLoading}
                         onClick={() => handleCreate(content, isPinned)}
                     >
-                        Create Task
+                        {isLoading ? (<><Loader2 className="animate-spin" /> {"Creating..."}</>) : "Create Note"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

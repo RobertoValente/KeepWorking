@@ -1,6 +1,6 @@
 "use client"
 
-import { CircleDot } from "lucide-react";
+import { CircleDot, Loader2 } from "lucide-react";
 import { Project } from "@/lib/drizzle/type";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -25,6 +25,7 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
     const [name, setName] = useState(project.name || "");
     const [description, setDescription] = useState(project.description || "");
     const [color, setColor] = useState(project.color || "blue");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSave = (updatedProject: { name: string; description: string; color: string }) => {
         if(isPending) return toast.error("Please wait, session is loading!");
@@ -33,6 +34,7 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
         if(!name.trim()) return toast.error("Project name is required!");
         if(!color) return toast.error("Project color is required!");
 
+        setIsLoading(true);
         updateProject.mutate({
             userId: data.user.id,
             updatedProject: {
@@ -45,10 +47,12 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
             onSuccess: () => {
                 toast.success("Project updated successfully!");
                 onOpenChange(false);
+                setIsLoading(false);
             },
             onError: (error) => {
                 console.error("Error updating project:", error);
                 toast.error("Failed to update project!");
+                setIsLoading(false);
             }
         })
     }
@@ -67,6 +71,7 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="w-full"
+                            disabled={isLoading}
                             required
                         />
                     </div>
@@ -78,6 +83,7 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             className="w-full"
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -86,6 +92,7 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
                         <Select
                             value={color}
                             onValueChange={(value) => setColor(value)}
+                            disabled={isLoading}
                             required
                         >
                             <SelectTrigger className="w-full cursor-pointer">
@@ -124,15 +131,17 @@ export default function EditProjectModal({ isOpen, onOpenChange, project }: Prop
                     <Button
                         className="cursor-pointer"
                         variant="outline"
+                        disabled={isLoading}
                         onClick={() => onOpenChange(false)}
                     >
                         Cancel
                     </Button>
                     <Button
                         className="cursor-pointer"
+                        disabled={isLoading}
                         onClick={() => handleSave({ name, description, color })}
                     >
-                        Save
+                        {isLoading ? (<><Loader2 className="animate-spin" /> {"Editing..."}</>) : "Edit Project"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

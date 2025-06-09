@@ -1,6 +1,6 @@
 "use client"
 
-import { CircleDot } from "lucide-react";
+import { CircleDot, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ export default function CreateTaskModal({ isOpen, onOpenChange, projectId }: Pro
     const [content, setContent] = useState("");
     const [priority, setPriority] = useState("normal");
     const [dueDate, setDueDate] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleCreate = (content: string, priority: string, dueDate: Date | null) => {
         if(isPending) return toast.error("Please wait, session is loading!");
@@ -33,6 +34,7 @@ export default function CreateTaskModal({ isOpen, onOpenChange, projectId }: Pro
         if(!priority) return toast.error("Task priority is required!");
         if(!dueDate) dueDate = null;
 
+        setIsLoading(true);
         createTask.mutate({
             userId: data.user.id,
             newTask: {
@@ -48,10 +50,12 @@ export default function CreateTaskModal({ isOpen, onOpenChange, projectId }: Pro
                 setContent("");
                 setPriority("normal");
                 setDueDate("");
+                setIsLoading(false);
             },
             onError: (error) => {
                 console.error("Error creating task:", error);
                 toast.error("Failed to create task!");
+                setIsLoading(false);
             }
         });
     }
@@ -70,6 +74,7 @@ export default function CreateTaskModal({ isOpen, onOpenChange, projectId }: Pro
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="w-full"
+                            disabled={isLoading}
                             required
                         />
                     </div>
@@ -80,6 +85,7 @@ export default function CreateTaskModal({ isOpen, onOpenChange, projectId }: Pro
                             defaultValue={priority}
                             value={priority}
                             onValueChange={(value) => setPriority(value.toLowerCase())}
+                            disabled={isLoading}
                             required
                         >
                             <SelectTrigger className="w-full cursor-pointer">
@@ -110,6 +116,7 @@ export default function CreateTaskModal({ isOpen, onOpenChange, projectId }: Pro
                             value={dueDate.toLocaleString()}
                             onChange={(e) => setDueDate(e.target.value)}
                             className="w-full"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
@@ -117,15 +124,17 @@ export default function CreateTaskModal({ isOpen, onOpenChange, projectId }: Pro
                     <Button
                         className="cursor-pointer"
                         variant="outline"
+                        disabled={isLoading}
                         onClick={() => onOpenChange(false)}
                     >
                         Cancel
                     </Button>
                     <Button
                         className="cursor-pointer"
+                        disabled={isLoading}
                         onClick={() => handleCreate(content, priority, new Date(dueDate))}
                     >
-                        Create Task
+                        {isLoading ? (<><Loader2 className="animate-spin" /> {"Creating..."}</>) : "Create Task"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

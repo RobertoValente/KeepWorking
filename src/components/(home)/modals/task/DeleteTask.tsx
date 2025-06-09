@@ -6,6 +6,8 @@ import { useDeleteTask } from "@/hooks/use-task";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth/client";
 import { Task } from "@/lib/drizzle/type";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 type Props = {
     isOpen: boolean;
@@ -18,12 +20,15 @@ export default function DeleteTaskModal({ isOpen, onOpenChange, projectId, task 
     const {data, isPending} = useSession();
     const deleteTask = useDeleteTask();
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleDelete = () => {
         if (isPending) return toast.error("Please wait, session is loading!");
         if (!data?.user?.id) return toast.error("User ID is not available!");
 
         if (!projectId || !task.id) return toast.error("Project ID and Task ID are required!");
 
+        setIsLoading(true);
         deleteTask.mutate({
             taskId: task.id,
             projectId,
@@ -32,10 +37,12 @@ export default function DeleteTaskModal({ isOpen, onOpenChange, projectId, task 
             onSuccess: () => {
                 toast.success("Task deleted successfully!");
                 onOpenChange(false);
+                setIsLoading(false);
             },
             onError: (error) => {
                 console.error("Error deleting task:", error);
                 toast.error("Failed to delete task!");
+                setIsLoading(false);
             }
         });
     }
@@ -53,6 +60,7 @@ export default function DeleteTaskModal({ isOpen, onOpenChange, projectId, task 
                     <Button
                         className="cursor-pointer"
                         variant="outline"
+                        disabled={isLoading}
                         onClick={() => onOpenChange(false)}
                     >
                         Cancel
@@ -60,9 +68,10 @@ export default function DeleteTaskModal({ isOpen, onOpenChange, projectId, task 
                     <Button
                         className="cursor-pointer"
                         variant="destructive"
+                        disabled={isLoading}
                         onClick={() => handleDelete()}
                     >
-                        Delete
+                        {isLoading ? (<><Loader2 className="animate-spin" /> {"Deleting..."}</>) : "Delete Task"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -1,6 +1,6 @@
 "use client"
 
-import { CircleDot } from "lucide-react";
+import { CircleDot, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
     const [content, setContent] = useState(task?.content || "");
     const [priority, setPriority] = useState(task?.priority || "normal");
     const [dueDate, setDueDate] = useState(task?.dueDate || "");
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setContent(task?.content || "");
@@ -40,6 +41,7 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
         if(!priority) return toast.error("Task priority is required!");
         if(!dueDate || isNaN(dueDate.getDate())) dueDate = null;
 
+        setIsLoading(true);
         updateTask.mutate({
             userId: data.user.id,
             updatedTask: {
@@ -52,10 +54,12 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
             onSuccess: () => {
                 toast.success("Task updated successfully!");
                 onOpenChange(false);
+                setIsLoading(false);
             },
             onError: (error) => {
                 console.error("Error updating task:", error);
                 toast.error("Failed to update task!");
+                setIsLoading(false);
             }
         });
     }
@@ -74,6 +78,7 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="w-full"
+                            disabled={isLoading}
                             required
                         />
                     </div>
@@ -84,6 +89,7 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
                             defaultValue={priority}
                             value={priority}
                             onValueChange={(value) => setPriority(value.toLowerCase())}
+                            disabled={isLoading}
                             required
                         >
                             <SelectTrigger className="w-full cursor-pointer">
@@ -114,6 +120,7 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
                             value={typeof dueDate === "string" ? dueDate : dueDate?.toISOString().slice(0, 10) || ""}
                             onChange={(e) => setDueDate(e.target.value)}
                             className="w-full"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
@@ -121,15 +128,17 @@ export default function EditTaskModal({ isOpen, onOpenChange, task }: Props) {
                     <Button
                         className="cursor-pointer"
                         variant="outline"
+                        disabled={isLoading}
                         onClick={() => onOpenChange(false)}
                     >
                         Cancel
                     </Button>
                     <Button
                         className="cursor-pointer"
+                        disabled={isLoading}
                         onClick={() => handleEdit(content, priority, new Date(dueDate))}
                     >
-                        Edit Task
+                        {isLoading ? (<><Loader2 className="animate-spin" /> {"Editing..."}</>) : "Edit Task"}
                     </Button>
                 </DialogFooter>
             </DialogContent>
