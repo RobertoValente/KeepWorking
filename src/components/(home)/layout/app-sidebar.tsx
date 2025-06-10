@@ -1,10 +1,10 @@
 import { Sidebar, SidebarContent, SidebarFooter as SidebarFooterShadcn, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { SidebarFooter } from "@/components/(home)/layout/sidebar-footer"
 import { SidebarMain } from "@/components/(home)/layout/sidebar-main"
-import { ChartNoAxesCombined } from "lucide-react"
 import * as React from "react"
 import Link from "next/link"
-
+import Image from "next/image"
+ 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="offcanvas" {...props}>
@@ -16,7 +16,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             className="data-[slot=sidebar-menu-button]:!p-1.5"
                         >
                             <Link href="/home">
-                                <ChartNoAxesCombined className="!size-5" />
+                                <Image src={"/logo.png"} alt="KeepWorking Logo" height={24} width={24} />
                                 <span className="text-base font-semibold">KeepWorking.</span>
                             </Link>
                         </SidebarMenuButton>
