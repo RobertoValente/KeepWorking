@@ -165,7 +165,7 @@ export default function ProjectPage() {
                                                                 }}
                                                             />
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
-                                                                <span className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
+                                                                <span className="font-medium truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
                                                                     {task.content}
                                                                 </span>
                                                                 
@@ -228,7 +228,7 @@ export default function ProjectPage() {
                                                     >
                                                         <div className="flex items-center gap-3 w-full">
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
-                                                                <h3 className="font-medium truncate w-full break-words whitespace-pre-line text-balance">
+                                                                <h3 className="font-medium truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
                                                                     {note.content}
                                                                 </h3>
                                                             </div>
