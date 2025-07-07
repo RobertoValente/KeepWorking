@@ -34,30 +34,17 @@ export function SidebarFooter() {
     return (
         <SidebarMenu className="gap-2">
             {(!isPending && data?.user?.id && data.user.email === "robertovalennte@gmail.com") && (
-                <>
-                    <SidebarMenuItem key="GoogleDocsIntershipSeasonBtn">
-                        <Link href={"https://docs.google.com/document/d/1WIwUwPvxslJLO5uslRsDUAbsqJ5a0vN9rK5Wkp4RGbs/edit?tab=t.0"} target="_blank">
-                            <Button
-                                variant="outline"
-                                className="w-full hover:cursor-pointer justify-start"
-                            >
-                                <ExternalLink className="size-4" />
-                                🚀 Época Estágio
-                            </Button>
-                        </Link>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem key="GoogleDocsBrainBtn">
-                        <Link href={"https://docs.google.com/document/d/1D9N3p33j0uiRuVCob-txz8dWlRaKjH4b-xBAWwIOndY/edit?tab=t.ioldll5tn8iu"} target="_blank">
-                            <Button
-                                variant="outline"
-                                className="w-full hover:cursor-pointer justify-start"
-                            >
-                                <ExternalLink className="size-4" />
-                                🧠 Cérebro
-                            </Button>
-                        </Link>
-                    </SidebarMenuItem>
-                </>
+                <SidebarMenuItem key="GoogleDocsBrainBtn">
+                    <Link href={"https://docs.google.com/document/d/1D9N3p33j0uiRuVCob-txz8dWlRaKjH4b-xBAWwIOndY/edit?tab=t.ioldll5tn8iu"} target="_blank">
+                        <Button
+                            variant="outline"
+                            className="w-full hover:cursor-pointer justify-start"
+                        >
+                            <ExternalLink className="size-4" />
+                            🧠 Cérebro
+                        </Button>
+                    </Link>
+                </SidebarMenuItem>
             )}
             <SidebarMenuItem key="GoogleCalendarBtn">
                 <Link href={"https://calendar.google.com/calendar/u/0/r"} target="_blank">
