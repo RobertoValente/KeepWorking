@@ -228,9 +228,13 @@ export default function ProjectPage() {
                                                     >
                                                         <div className="flex items-center gap-3 w-full">
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
-                                                                <h3 className="font-medium truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
-                                                                    {note.content}
+                                                                {/* For demo purposes, showing how title would appear */}
+                                                                <h3 className="font-semibold text-base truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
+                                                                    {note.title}
                                                                 </h3>
+                                                                <p className="text-sm text-gray-600 dark:text-gray-400 truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3 mt-1">
+                                                                    {note.content}
+                                                                </p>
                                                             </div>
                                                             <Button
                                                                 onClick={() => {setSelectedNote(note); setUpdateNote(true)}}

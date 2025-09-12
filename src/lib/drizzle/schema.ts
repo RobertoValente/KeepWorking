@@ -70,6 +70,7 @@ export const task = mysqlTable("task", {
 
 export const note = mysqlTable("note", {
     id: varchar('id', { length: 36 }).primaryKey(),
+    title: varchar('title', { length: 125 }),
     content: text('content').notNull(),
     isPinned: tinyint('is_pinned').notNull().$defaultFn(() => 0),
     createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),

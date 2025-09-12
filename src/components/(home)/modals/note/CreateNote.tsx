@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateNote } from "@/hooks/use-note";
 import { useSession } from "@/lib/auth/client";
@@ -22,6 +23,7 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
     const createNote = useCreateNote();
 
     const [content, setContent] = useState("");
+    const [title, setTitle] = useState("");
     const [isPinned, setIsPinned] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -29,6 +31,8 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
         if(isPending) return toast.error("Please wait, session is loading!");
         if(!data?.user?.id) return toast.error("User ID is not available!");
 
+        if(!title.trim()) return toast.error("Note title is required!");
+        if(title.trim().length > 126) return toast.error("Note title must be less than 126 characters!");
         if(!content.trim()) return toast.error("Note details is required!");
         
         setIsLoading(true);
@@ -36,6 +40,7 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
             userId: data.user.id,
             newNote: {
                 content: content.trim(),
+                title: title.trim(),
                 isPinned,
                 projectId: projectId,
             }
@@ -44,6 +49,7 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
                 toast.success("Note created successfully!");
                 onOpenChange(false);
                 setContent("");
+                setTitle("");
                 setIsPinned(0);
                 setIsLoading(false);
             },
@@ -62,6 +68,17 @@ export default function CreateNoteModal({ isOpen, onOpenChange, projectId }: Pro
                     <DialogTitle className="text-3xl">Create Note</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label className="block mb-2">Note Title (Optional)</Label>
+                        <Input
+                            placeholder="Enter note title..."
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full"
+                            disabled={isLoading}
+                        />
+                    </div>
+
                     <div className="space-y-2">
                         <Label className="block mb-2">Note Details</Label>
                         <Textarea

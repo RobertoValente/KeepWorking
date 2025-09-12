@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useUpdateNote } from "@/hooks/use-note";
 import { toast } from "sonner";
@@ -24,10 +25,12 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
 
     const [isLoading, setIsLoading] = useState(false);
     const [content, setContent] = useState(note?.content || "");
+    const [title, setTitle] = useState(note?.title || "");
     const [isPinned, setIsPinned] = useState(note?.isPinned || 0);
 
     useEffect(() => {
         setContent(note?.content || "");
+        setTitle(note?.title || "");
         setIsPinned(note?.isPinned || 0);
     }, [note]);
 
@@ -35,6 +38,8 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
         if(isPending) return toast.error("Please wait, session is loading!");
         if(!data?.user?.id) return toast.error("User ID is not available!");
 
+        if(!title.trim()) return toast.error("Note title is required!");
+        if(title.trim().length > 126) return toast.error("Note title must be less than 126 characters!");
         if(!content.trim()) return toast.error("Task details is required!");
 
         setIsLoading(true);
@@ -42,7 +47,8 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
             userId: data.user.id,
             updatedNote: {
                 ...note,
-                content,
+                content: content.trim(),
+                title: title.trim(),
                 isPinned,
             }
         }, {
@@ -66,6 +72,17 @@ export default function EditNoteModal({ isOpen, onOpenChange, note }: Props) {
                     <DialogTitle className="text-3xl">Edit Note</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label className="block mb-2">Note Title (Optional)</Label>
+                        <Input
+                            placeholder="Enter note title..."
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full"
+                            disabled={isLoading}
+                        />
+                    </div>
+
                     <div className="space-y-2">
                         <Label className="block mb-2">Note Details</Label>
                         <Textarea
