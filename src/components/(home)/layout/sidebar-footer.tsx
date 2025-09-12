@@ -4,15 +4,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AppContext } from "@/components/(home)/layout/app-context-provider"
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, LogOut, Monitor, Moon, Sun } from "lucide-react"
-import { signOut, useSession } from "@/lib/auth/client"
+import { LogOut, Monitor, Moon, Sun } from "lucide-react"
+import { signOut /*, useSession*/ } from "@/lib/auth/client"
 import { useRouter } from "next/navigation"
 import { useContext } from "react"
 import { toast } from "sonner"
-import Link from "next/link"
+//import Link from "next/link"
 
 export function SidebarFooter() {
-    const {data, isPending} = useSession();
+    //const {data, isPending} = useSession();
     const { theme, updateTheme } = useContext(AppContext);
     const router = useRouter();
 
@@ -33,30 +33,6 @@ export function SidebarFooter() {
 
     return (
         <SidebarMenu className="gap-2">
-            {(!isPending && data?.user?.id && data.user.email === "robertovalennte@gmail.com") && (
-                <SidebarMenuItem key="GoogleDocsBrainBtn">
-                    <Link href={"https://docs.google.com/document/d/1D9N3p33j0uiRuVCob-txz8dWlRaKjH4b-xBAWwIOndY/edit?tab=t.ioldll5tn8iu"} target="_blank">
-                        <Button
-                            variant="outline"
-                            className="w-full hover:cursor-pointer justify-start"
-                        >
-                            <ExternalLink className="size-4" />
-                            🧠 Cérebro
-                        </Button>
-                    </Link>
-                </SidebarMenuItem>
-            )}
-            <SidebarMenuItem key="GoogleCalendarBtn">
-                <Link href={"https://calendar.google.com/calendar/u/0/r"} target="_blank">
-                    <Button
-                        variant="outline"
-                        className="w-full hover:cursor-pointer justify-start"
-                    >
-                        <ExternalLink className="size-4" />
-                        📆 Google Calendar
-                    </Button>
-                </Link>
-            </SidebarMenuItem>
             <SidebarMenuItem key="ThemeSidebarSelect">
                 <Select
                     defaultValue={theme}

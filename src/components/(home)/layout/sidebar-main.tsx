@@ -9,6 +9,7 @@ import { useSession } from "@/lib/auth/client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
+import { SidebarPopover } from "@/components/(home)/layout/sidebar-popover";
 
 function getHexCode(color: string | undefined) {
     const ColorHex = {
@@ -38,60 +39,63 @@ export function SidebarMain() {
 
     return (
         <>
-        <SidebarGroup className="-mb-4">
-            <SidebarGroupContent>
-                <SidebarMenu>
-                    <SidebarMenuItem className="flex items-center gap-2">
-                        <Button
-                            size="icon"
-                            className="size-8 w-full group-data-[collapsible=icon]:opacity-0 cursor-pointer"
-                            variant="outline"
-                            onClick={handleNewProject}
-                            disabled={createProject.isPending}
-                        >
-                            <Plus />
-                            New Project
-                        </Button>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-            <SidebarGroupLabel>
-                Projects
-            </SidebarGroupLabel>
-            <SidebarGroupContent className="flex flex-col gap-2">
-                <SidebarMenu>
-                    {isLoading || isPending ? (
-                        <Loader2 className="size-4 animate-spin m-auto mt-2" />
-                    ) : isError ? (
-                        <span className="text-center text-[13px] text-muted-foreground mt-1">
-                            Error loading projects!
-                        </span>
-                    ) : !projects || projects.length === 0 ? (
-                        <span className="text-center text-[13px] mx-2 text-muted-foreground mt-1">
-                            Nothing found.
-                        </span>
-                    ) : (
-                        projects.map(project => (
-                            <SidebarMenuItem key={`${project.id}-SideBarBtn`}>
-                                <SidebarMenuButton
-                                        asChild
-                                        className="cursor-pointer"
-                                        isActive={pathname === ("/home/projects/" + project.id)}
-                                        tooltip={project.name}
-                                    >
-                                    <Link href={"/home/projects/" + project.id}>
-                                        <CircleDot className="!size-3" color={getHexCode(project.color)} fill={getHexCode(project.color)} />
-                                        <span>{project.name}</span>
-                                    </Link>
-                                </SidebarMenuButton>
+            {(!isPending && data?.user?.id && data.user.email === "robertovalennte@gmail.com") && (
+                <SidebarGroup className="-mb-4">
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            <SidebarMenuItem className="flex items-center gap-2 flex-col">
+                                <SidebarPopover />
+                                <Button
+                                    size="icon"
+                                    className="size-8 w-full group-data-[collapsible=icon]:opacity-0 cursor-pointer"
+                                    variant="outline"
+                                    onClick={handleNewProject}
+                                    disabled={createProject.isPending}
+                                >
+                                    <Plus />
+                                    New Project
+                                </Button>
                             </SidebarMenuItem>
-                        ))
-                    )}
-                </SidebarMenu>
-            </SidebarGroupContent>
-        </SidebarGroup>
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+            )}
+            <SidebarGroup>
+                <SidebarGroupLabel>
+                    Projects
+                </SidebarGroupLabel>
+                <SidebarGroupContent className="flex flex-col gap-2">
+                    <SidebarMenu>
+                        {isLoading || isPending ? (
+                            <Loader2 className="size-4 animate-spin m-auto mt-2" />
+                        ) : isError ? (
+                            <span className="text-center text-[13px] text-muted-foreground mt-1">
+                                Error loading projects!
+                            </span>
+                        ) : !projects || projects.length === 0 ? (
+                            <span className="text-center text-[13px] mx-2 text-muted-foreground mt-1">
+                                Nothing found.
+                            </span>
+                        ) : (
+                            projects.map(project => (
+                                <SidebarMenuItem key={`${project.id}-SideBarBtn`}>
+                                    <SidebarMenuButton
+                                            asChild
+                                            className="cursor-pointer"
+                                            isActive={pathname === ("/home/projects/" + project.id)}
+                                            tooltip={project.name}
+                                        >
+                                        <Link href={"/home/projects/" + project.id}>
+                                            <CircleDot className="!size-3" color={getHexCode(project.color)} fill={getHexCode(project.color)} />
+                                            <span>{project.name}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))
+                        )}
+                    </SidebarMenu>
+                </SidebarGroupContent>
+            </SidebarGroup>
         </>
     )
 }
