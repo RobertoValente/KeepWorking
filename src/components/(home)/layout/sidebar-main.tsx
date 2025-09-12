@@ -1,33 +1,37 @@
 "use client"
 
-import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button";
+import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar"
 import { useGetProjects } from "@/hooks/use-project";
 import { useCreateProject } from "@/hooks/use-project";
-import { Plus, Loader2, CircleDot } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { useSession } from "@/lib/auth/client";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { toast } from "sonner";
 import { SidebarPopover } from "@/components/(home)/layout/sidebar-popover";
-
-function getHexCode(color: string | undefined) {
-    const ColorHex = {
-        "red": "#f14445",
-        "green": "#20c45f",
-        "blue": "#3a81f6",
-        "orange": "#f87103",
-        "yellow": "#f9cc21",
-        "purple": "#a957f7",
-    };
-
-    return ColorHex[color as keyof typeof ColorHex] || ColorHex["blue"];
-}
+import { SidebarAccordion } from "@/components/(home)/layout/sidebar-accordion";
+import { useState } from "react";
 
 export function SidebarMain() {
-    const pathname = usePathname();
     const {data, isPending} = useSession();
     const createProject = useCreateProject();
+    const [openAccordion, setOpenAccordion] = useState<"projects" | "webhooks" | "both" | null>("projects");
+
+    function handleOpenAccordion(type: "projects" | "webhooks" | "both") {
+        const allowBothOpen = true;
+        
+        return (allowBothOpen)
+            ? setOpenAccordion(prev => {
+                if (prev === "both") {
+                    return type === "projects" ? "webhooks" : "projects";
+                } else if (prev === type) {
+                    return null;
+                } else if (prev === null) {
+                    return type;
+                } else {
+                    return "both";
+                }
+            })
+            : setOpenAccordion(prev => (prev === type ? null : type));
+    }
 
     function handleNewProject() {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -36,7 +40,7 @@ export function SidebarMain() {
 
     const { data: projects, isLoading, error, isError } = useGetProjects(data?.user.id || "");
     if(isError) console.error("Error loading projects:", error);
-
+    
     return (
         <>
             {(!isPending && data?.user?.id && data.user.email === "robertovalennte@gmail.com") && (
@@ -45,57 +49,44 @@ export function SidebarMain() {
                         <SidebarMenu>
                             <SidebarMenuItem className="flex items-center gap-2 flex-col">
                                 <SidebarPopover />
-                                <Button
-                                    size="icon"
-                                    className="size-8 w-full group-data-[collapsible=icon]:opacity-0 cursor-pointer"
-                                    variant="outline"
-                                    onClick={handleNewProject}
-                                    disabled={createProject.isPending}
-                                >
-                                    <Plus />
-                                    New Project
-                                </Button>
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
             )}
-            <SidebarGroup>
-                <SidebarGroupLabel>
-                    Projects
-                </SidebarGroupLabel>
-                <SidebarGroupContent className="flex flex-col gap-2">
-                    <SidebarMenu>
-                        {isLoading || isPending ? (
-                            <Loader2 className="size-4 animate-spin m-auto mt-2" />
-                        ) : isError ? (
-                            <span className="text-center text-[13px] text-muted-foreground mt-1">
-                                Error loading projects!
-                            </span>
-                        ) : !projects || projects.length === 0 ? (
-                            <span className="text-center text-[13px] mx-2 text-muted-foreground mt-1">
-                                Nothing found.
-                            </span>
-                        ) : (
-                            projects.map(project => (
-                                <SidebarMenuItem key={`${project.id}-SideBarBtn`}>
-                                    <SidebarMenuButton
-                                            asChild
-                                            className="cursor-pointer"
-                                            isActive={pathname === ("/home/projects/" + project.id)}
-                                            tooltip={project.name}
-                                        >
-                                        <Link href={"/home/projects/" + project.id}>
-                                            <CircleDot className="!size-3" color={getHexCode(project.color)} fill={getHexCode(project.color)} />
-                                            <span>{project.name}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))
-                        )}
-                    </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
+            {isLoading || isPending ? (
+                <Loader2 className="size-4 animate-spin m-auto mt-3" />
+            ) : isError ? (
+                <span className="text-center text-[13px] text-muted-foreground mt-2">
+                    Error loading projects!
+                </span>
+            ) : (
+                <div className="flex flex-col pt-1">
+                    <SidebarAccordion
+                        title="Projects"
+                        content={
+                            projects
+                                ? projects.map(project => ({ id: project.id, name: project.name ?? "", color: project.color ?? "" }))
+                                : null
+                        }
+                        action={handleNewProject}
+                        isOpen={openAccordion === "projects" || openAccordion === "both"}
+                        handleOpen={() => handleOpenAccordion("projects")}
+                    />
+                    <SidebarAccordion
+                        title="Webhooks"
+                        content={
+                            projects
+                                ? projects.map(project => ({ id: project.id, name: project.name ?? "", color: project.color ?? "" }))
+                                : null
+                        }
+                        action={handleNewProject}
+                        isOpen={openAccordion === "webhooks" || openAccordion === "both"}
+                        handleOpen={() => handleOpenAccordion("webhooks")}
+                    />
+                </div>
+                
+            )}
         </>
     )
 }

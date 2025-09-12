@@ -5,7 +5,7 @@ import { ExternalLink } from "lucide-react"
 
 const usefulLinks = {
     "🧠 Cérebro": "https://docs.google.com/document/d/1D9N3p33j0uiRuVCob-txz8dWlRaKjH4b-xBAWwIOndY/edit?tab=t.ioldll5tn8iu",
-    "🗂️ PhpMyAdmin": "https://phpmyadmin.robertovalente.pt",
+    "🗂️ PhpMyAdmin": "http://phpmyadmin.robertovalente.pt/",
     "📆 Google Calendar": "https://calendar.google.com/calendar/u/0/r",
 }
 
@@ -20,7 +20,7 @@ export function SidebarPopover() {
                         variant="outline"
                     >Quick Links</Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[271px] md:w-56">
+                <PopoverContent className="mt-1 w-[271px] md:w-56">
                     <div className="flex flex-col gap-2">
                         {Object.entries(usefulLinks).map(([name, url]) => (
                             <Link
