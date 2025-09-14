@@ -33,7 +33,7 @@ export function SidebarAccordion({ title, content, action, isOpen, handleOpen }:
         <>
             <SidebarGroup className="select-none py-1">
                 <SidebarGroupLabel className="flex items-center justify-between p-0">
-                    <div className="flex items-center gap-1 flex-1 cursor-pointer h-8 hover:text-accent-foreground" onClick={handleOpen}>
+                    <div className="flex items-center gap-1 flex-1 cursor-pointer h-8 hover:text-accent-foreground transition-all" onClick={handleOpen}>
                         {isOpen ? <ChevronDown className="!size-4" /> : <ChevronRight className="!size-4" />}
                         {title}
                     </div>
