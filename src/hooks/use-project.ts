@@ -1,6 +1,6 @@
 import { Project } from '@/lib/drizzle/type';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getProjects, getProjectById, createProject, updateProject, deleteProject } from '@/app/home/actions';
+import { getProjects, getProjectById, createProject, updateProject, deleteProject } from '@/app/home/projects/actions';
 
 export const useGetProjects = (userId: string) => {
     return useQuery({

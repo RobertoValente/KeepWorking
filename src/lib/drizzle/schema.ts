@@ -77,3 +77,22 @@ export const note = mysqlTable("note", {
     updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
     projectId: varchar('project_id', { length: 36 }).notNull().references(() => project.id, { onDelete: 'cascade' }),
 });
+
+export const webhook = mysqlTable("webhook", {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    name: text('name').notNull().$defaultFn(() => 'New Webhook'),
+    description: text('description'),
+    color: text('color').notNull().$defaultFn(() => 'blue'),
+    isValid: tinyint('is_valid').$defaultFn(() => 1).notNull(),
+    createdAt: timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    updatedAt: timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    userId: varchar('user_id', { length: 36 }).notNull().references(() => user.id, { onDelete: 'cascade' })
+});
+
+export const log = mysqlTable("log", {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    content: text('content').notNull(),
+    type: text('type').notNull().$defaultFn(() => 'info'),
+    timestamp: timestamp('timestamp').$defaultFn(() => /* @__PURE__ */ new Date()).notNull(),
+    webhookId: varchar('webhook_id', { length: 36 }).notNull().references(() => webhook.id, { onDelete: 'cascade' }),
+});

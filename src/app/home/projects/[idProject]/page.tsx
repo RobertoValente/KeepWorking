@@ -90,13 +90,11 @@ export default function ProjectPage() {
                 </span>
             ) : (
                 <>
-                    {/*<ProjectDetails project={project} />*/}
                     <div id="project-details" className={isAnyModalOpen ? "blur-xs transition-all" : "transition-all"}>
                         <div className="flex items-center justify-start gap-2 mb-4">
                             <h1 className="text-4xl font-bold mr-2">{project.name}</h1>
                         </div>
                         <div className="text-base -mt-2">
-                            {/*{project.description && ( <span>{project.description} <br /></span> )}*/}
 
                             <span className="italic text-gray-600 dark:text-gray-400">
                                 Created on {formatDate(project.createdAt)}
@@ -131,7 +129,6 @@ export default function ProjectPage() {
                                 <TabsTrigger value="notes" className="cursor-pointer">Notes</TabsTrigger>
                             </TabsList>
                             <TabsContent value="tasks">
-                                {/*<Card className="w-full p-2 border-0 shadow-none">*/}
                                 <Card className="w-full p-2">
                                     <CardHeader className="p-2">
                                         <CardDescription>
@@ -228,7 +225,6 @@ export default function ProjectPage() {
                                                     >
                                                         <div className="flex items-center gap-3 w-full">
                                                             <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
-                                                                {/* For demo purposes, showing how title would appear */}
                                                                 <h3 className="font-semibold text-base truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
                                                                     {note.title}
                                                                 </h3>

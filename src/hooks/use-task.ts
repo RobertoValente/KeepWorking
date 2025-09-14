@@ -1,6 +1,6 @@
 import { Task } from '@/lib/drizzle/type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createTask, updateTask, deleteTask, isDoneTask } from '@/app/home/actions';
+import { createTask, updateTask, deleteTask, isDoneTask } from '@/app/home/projects/actions';
 
 export function useCreateTask() {
     const queryClient = useQueryClient();

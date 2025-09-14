@@ -65,23 +65,26 @@ export function SidebarAccordion({ title, content, action, isOpen, handleOpen }:
                                     Nothing found.
                                 </span>
                             ) : (
-                                content.map(project => (
+                                content.map(item => {
+                                    const isWebhook = title.toLowerCase().includes('webhook');
+                                    const basePath = isWebhook ? '/home/webhooks/' : '/home/projects/';
                                     
-                                        
-                                    <SidebarMenuItem key={`${project.id}-SideBarBtn`}>
-                                        <SidebarMenuButton
-                                                asChild
-                                                className="cursor-pointer"
-                                                isActive={pathname === ("/home/projects/" + project.id)}
-                                                tooltip={project.name}
-                                            >
-                                            <Link href={"/home/projects/" + project.id}>
-                                                <CircleDot className="!size-3" color={getHexCode(project.color)} fill={getHexCode(project.color)} />
-                                                <span>{project.name}</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))
+                                    return (
+                                        <SidebarMenuItem key={`${item.id}-SideBarBtn`}>
+                                            <SidebarMenuButton
+                                                    asChild
+                                                    className="cursor-pointer"
+                                                    isActive={pathname === (basePath + item.id)}
+                                                    tooltip={item.name}
+                                                >
+                                                <Link href={basePath + item.id}>
+                                                    <CircleDot className="!size-3" color={getHexCode(item.color)} fill={getHexCode(item.color)} />
+                                                    <span>{item.name}</span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })
                             )}
                         </SidebarMenu>
                     </SidebarGroupContent>

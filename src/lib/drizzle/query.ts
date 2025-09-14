@@ -1,8 +1,8 @@
 'server-only'
 
 import { db } from "@/lib/drizzle/index";
-import { user, project, task, note } from "@/lib/drizzle/schema";
-import { User, Project, ProjectWithTasksAndNotes, Task, Note } from "@/lib/drizzle/type";
+import { user, project, task, note, webhook, log } from "@/lib/drizzle/schema";
+import { User, Project, ProjectWithTasksAndNotes, Task, Note, Webhook, WebhookWithLogs, Log } from "@/lib/drizzle/type";
 import { and, eq, desc } from "drizzle-orm";
 
 export const Query = {
@@ -178,6 +178,121 @@ export const Query = {
         await db
             .delete(note)
             .where(eq(note.id, noteId));
+    },
+
+    getWebhooks: async function(userId: string): Promise<Webhook[]> {
+        return await db
+            .select()
+            .from(webhook)
+            .where(
+                and(
+                    eq(webhook.isValid, 1),
+                    eq(webhook.userId, userId)
+                )
+            )
+            .orderBy(
+                desc(webhook.createdAt)
+            );
+    },
+
+    getWebhookById: async function(webhookId: string, userId: string): Promise<WebhookWithLogs | null> {
+        return await db
+            .select()
+            .from(webhook)
+            .leftJoin(log, eq(log.webhookId, webhook.id))
+            .where(
+                and(
+                    eq(webhook.id, webhookId),
+                    eq(webhook.userId, userId),
+                    eq(webhook.isValid, 1)
+                )
+            )
+            .orderBy(
+                desc(webhook.createdAt),
+                desc(log.timestamp)
+            )
+            .then((rows) => {
+                if (!rows.length) return null;
+
+                const webhookData = rows[0].webhook;
+                
+                const logs = rows
+                    .map(row => row.log)
+                    .filter((log): log is Exclude<typeof log, null> => log !== null)
+                    .filter((log, idx, arr) => arr.findIndex(l => l.id === log.id) === idx)
+                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+                return {
+                    ...webhookData,
+                    logs,
+                };
+            });
+    },
+
+    createWebhook: async function(userId: string): Promise<Webhook> {
+        const newWebhook = {
+            id: crypto.randomUUID(),
+            userId,
+            name: "New Webhook",
+            description: "",
+            color: "blue",
+            isValid: 1,
+        };
+
+        await db
+            .insert(webhook)
+            .values(newWebhook);
+
+        return newWebhook;
+    },
+
+    updateWebhook: async function(userId: string, webhookId: string, updates: Partial<Webhook>): Promise<void> {
+        await db
+            .update(webhook)
+            .set(updates)
+            .where(
+                and(
+                    eq(webhook.id, webhookId),
+                    eq(webhook.userId, userId)
+                )
+            );
+    },
+
+    deleteWebhook: async function(webhookId: string, userId: string): Promise<void> {
+        await db
+            .update(webhook)
+            .set({ isValid: 0 })
+            .where(
+                and(
+                    eq(webhook.id, webhookId),
+                    eq(webhook.userId, userId)
+                )
+            );
+    },
+
+    createLog: async function(newLog: Omit<Log, 'id'>): Promise<Log> {
+        const logWithId: Log = {
+            ...newLog,
+            id: crypto.randomUUID(),
+        };
+        
+        await db
+            .insert(log)
+            .values(logWithId);
+
+        const insertedLog = await db
+            .select()
+            .from(log)
+            .where(eq(log.id, logWithId.id))
+            .then(rows => rows[0]);
+        
+        return insertedLog;
+    },
+
+    deleteLog: async function(logId: string): Promise<void> {
+        await db
+            .delete(log)
+            .where(eq(log.id, logId));
     },
 
     getUsers: async function(): Promise<User[]> {

@@ -1,6 +1,6 @@
 import { Note } from '@/lib/drizzle/type';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote, updateNote, deleteNote } from '@/app/home/actions';
+import { createNote, updateNote, deleteNote } from '@/app/home/projects/actions';
 
 
 export function useCreateNote() {
