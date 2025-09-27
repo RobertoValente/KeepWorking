@@ -1,8 +1,9 @@
 "use client"
 
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar"
-import { useCreateProject, useGetProjects } from "@/hooks/use-project";
-import { useCreateWebhook, useGetWebhooks } from "@/hooks/use-webhook";
+import { useCreateProject } from "@/hooks/use-project";
+import { useCreateWebhook } from "@/hooks/use-webhook";
+import { useSidebarData } from "@/hooks/use-sidebar-data";
 import { Loader2 } from "lucide-react"
 import { useSession } from "@/lib/auth/client";
 import { toast } from "sonner";
@@ -44,11 +45,10 @@ export function SidebarMain() {
         (!data?.user?.id) ? toast.error("Was not possible to get UserId!") : createWebhook.mutate(data.user.id);
     }
 
-    const { data: projects, isLoading: isLoadingProjects, error: errorProjects, isError: isErrorProjects } = useGetProjects(data?.user.id || "");
-    if(isErrorProjects) console.error("Error loading projects:", errorProjects);
-
-    const { data: webhooks, isLoading: isLoadingWebhooks, error: errorWebhooks, isError: isErrorWebhooks } = useGetWebhooks(data?.user.id || "");
-    if(isErrorWebhooks) console.error("Error loading webhooks:", errorWebhooks);
+    const { projects, webhooks, isAllLoaded } = useSidebarData(data?.user.id || "");
+    
+    if(projects.isError) console.error("Error loading projects:", projects.error);
+    if(webhooks.isError) console.error("Error loading webhooks:", webhooks.error);
 
     return (
         <>
@@ -65,44 +65,46 @@ export function SidebarMain() {
             )}
 
             <div className="flex flex-col pt-1">
-                {isLoadingProjects || isPending ? (
+                {!isAllLoaded || isPending ? (
                     <Loader2 className="size-4 animate-spin m-auto mt-3" />
-                ) : isErrorProjects ? (
-                    <span className="text-center text-[13px] text-muted-foreground mt-2">
-                        Error loading projects!
-                    </span>
                 ) : (
-                        <SidebarAccordion
-                            title="Projects"
-                            content={
-                                projects
-                                    ? projects.map(project => ({ id: project.id, name: project.name ?? "", color: project.color ?? "" }))
-                                    : null
-                            }
-                            action={handleNewProject}
-                            isOpen={openAccordion === "projects" || openAccordion === "both"}
-                            handleOpen={() => handleOpenAccordion("projects")}
-                        />
-                )}
+                    <>
+                        {projects.isError ? (
+                            <span className="text-center text-[13px] text-muted-foreground mt-2">
+                                Error loading projects!
+                            </span>
+                        ) : (
+                            <SidebarAccordion
+                                title="Projects"
+                                content={
+                                    projects.data
+                                        ? projects.data.map(project => ({ id: project.id, name: project.name ?? "", color: project.color ?? "" }))
+                                        : null
+                                }
+                                action={handleNewProject}
+                                isOpen={openAccordion === "projects" || openAccordion === "both"}
+                                handleOpen={() => handleOpenAccordion("projects")}
+                            />
+                        )}
 
-                {isLoadingWebhooks || isPending ? (
-                    <Loader2 className="size-4 animate-spin m-auto mt-3" />
-                ) : isErrorWebhooks ? (
-                    <span className="text-center text-[13px] text-muted-foreground mt-2">
-                        Error loading webhooks!
-                    </span>
-                ) : (
-                        <SidebarAccordion
-                            title="Webhooks"
-                            content={
-                                webhooks
-                                ? webhooks.map(webhook => ({ id: webhook.id, name: webhook.name ?? "", color: webhook.color ?? "" }))
-                                : null
-                            }
-                            action={handleNewWebhook}
-                            isOpen={openAccordion === "webhooks" || openAccordion === "both"}
-                            handleOpen={() => handleOpenAccordion("webhooks")}
-                        />
+                        {webhooks.isError ? (
+                            <span className="text-center text-[13px] text-muted-foreground mt-2">
+                                Error loading webhooks!
+                            </span>
+                        ) : (
+                            <SidebarAccordion
+                                title="Webhooks"
+                                content={
+                                    webhooks.data
+                                    ? webhooks.data.map(webhook => ({ id: webhook.id, name: webhook.name ?? "", color: webhook.color ?? "" }))
+                                    : null
+                                }
+                                action={handleNewWebhook}
+                                isOpen={openAccordion === "webhooks" || openAccordion === "both"}
+                                handleOpen={() => handleOpenAccordion("webhooks")}
+                            />
+                        )}
+                    </>
                 )}
             </div>
         </>
