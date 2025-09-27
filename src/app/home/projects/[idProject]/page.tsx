@@ -125,8 +125,8 @@ export default function ProjectPage() {
 
                         <Tabs defaultValue="tasks">
                             <TabsList className="absolute right-6 -mt-13">
-                                <TabsTrigger value="tasks" className="cursor-pointer">Tasks</TabsTrigger>
-                                <TabsTrigger value="notes" className="cursor-pointer">Notes</TabsTrigger>
+                                <TabsTrigger value="tasks" className="cursor-pointer">Tasks ({project.tasks.length})</TabsTrigger>
+                                <TabsTrigger value="notes" className="cursor-pointer">Notes ({project.notes.length})</TabsTrigger>
                             </TabsList>
                             <TabsContent value="tasks">
                                 <Card className="w-full p-2">
