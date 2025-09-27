@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetWebhookById } from "@/hooks/use-webhook";
-import { Loader2, Pencil, Trash2, X, RefreshCcw } from "lucide-react";
+import { Loader2, Pencil, Trash2, X, RefreshCcw, Copy, CopyCheck } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Log } from "@/lib/drizzle/type";
+import { toast } from "sonner";
 
 function formatDate(date: Date | string | undefined): string {
     if (!date) return null as unknown as string;
@@ -56,6 +57,7 @@ export default function WebhookPage() {
 
     const [deleteLog, setDeleteLog] = useState(false);
     const [selectedLog, setSelectedLog] = useState<Log | null>(null);
+    const [isCopied, setIsCopied] = useState(false);
 
     const isAnyModalOpen = editWebhook || deleteWebhook || deleteLog;
 
@@ -80,6 +82,31 @@ export default function WebhookPage() {
                 <>
                     <div id="project-details" className={isAnyModalOpen ? "blur-xs transition-all" : "transition-all"}>
                         <div className="flex items-center justify-start gap-2 mb-4">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="cursor-pointer"
+                                title={isCopied ? "Copied!" : "Copy Webhook URL"}
+                                onClick={async () => {
+                                    try {
+                                        await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_SITE_URL}/api/webhook/${webhook.id}`);
+                                        setIsCopied(true);
+                                        toast.success('Webhook URL copied to clipboard!');
+                                        
+                                        setTimeout(() => {
+                                            setIsCopied(false);
+                                        }, 2000);
+                                    } catch {
+                                        toast.error('Failed to copy URL to clipboard');
+                                    }
+                                }}
+                            >
+                                {isCopied ? (
+                                    <CopyCheck className="size-4" />
+                                ) : (
+                                    <Copy className="size-4" />
+                                )}
+                            </Button>
                             <h1 className="text-4xl font-bold mr-2">{webhook.name}</h1>
                         </div>
                         <div className="text-base -mt-2">
