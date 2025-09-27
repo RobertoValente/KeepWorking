@@ -16,7 +16,9 @@ export function useCreateTask() {
                     ...oldData,
                     tasks: [...(oldData.tasks || []), newTask].sort((a: Task, b: Task) => {
                         if ((a.isDone ?? 0) !== (b.isDone ?? 0)) return (a.isDone ?? 0) - (b.isDone ?? 0);
-                        return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                        const priorityDiff = (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                        if (priorityDiff !== 0) return priorityDiff;
+                        return (a.content || '').localeCompare(b.content || '');
                     }),
                 };
             });
@@ -39,7 +41,9 @@ export function useUpdateTask() {
                     ...oldData,
                     tasks: updatedTasks.sort((a: Task, b: Task) => {
                         if ((a.isDone ?? 0) !== (b.isDone ?? 0)) return (a.isDone ?? 0) - (b.isDone ?? 0);
-                        return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                        const priorityDiff = (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                        if (priorityDiff !== 0) return priorityDiff;
+                        return (a.content || '').localeCompare(b.content || '');
                     }),
                 };
             });
@@ -84,7 +88,9 @@ export function useIsDoneTask() {
                     ...oldData,
                     tasks: updatedTasks.sort((a: Task, b: Task) => {
                         if ((a.isDone ?? 0) !== (b.isDone ?? 0)) return (a.isDone ?? 0) - (b.isDone ?? 0);
-                        return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                        const priorityDiff = (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                        if (priorityDiff !== 0) return priorityDiff;
+                        return (a.content || '').localeCompare(b.content || '');
                     }),
                 };
             });

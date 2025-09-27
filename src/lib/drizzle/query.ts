@@ -3,7 +3,7 @@
 import { db } from "@/lib/drizzle/index";
 import { user, project, task, note, webhook, log } from "@/lib/drizzle/schema";
 import { User, Project, ProjectWithTasksAndNotes, Task, Note, Webhook, WebhookWithLogs, Log } from "@/lib/drizzle/type";
-import { and, eq, desc } from "drizzle-orm";
+import { and, eq, desc, asc } from "drizzle-orm";
 
 export const Query = {
     getProjects: async function(userId: string): Promise<Project[]> {
@@ -17,7 +17,7 @@ export const Query = {
                 )
             )
             .orderBy(
-                desc(project.createdAt)
+                asc(project.name)
             );
     },
 
@@ -35,9 +35,9 @@ export const Query = {
                 )
             )
             .orderBy(
-                desc(project.createdAt),
-                desc(task.createdAt),
-                desc(note.createdAt)
+                asc(project.name),
+                asc(task.content),
+                asc(note.title)
             )
             .then((rows) => {
                 if (!rows.length) return null;
@@ -51,14 +51,20 @@ export const Query = {
                     .filter((task, idx, arr) => arr.findIndex(t => t.id === task.id) === idx)
                     .sort((a, b) => {
                         if ((a.isDone ?? 0) !== (b.isDone ?? 0)) return (a.isDone ?? 0) - (b.isDone ?? 0);
-                        return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                        const priorityDiff = (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                        if (priorityDiff !== 0) return priorityDiff;
+                        return (a.content || '').localeCompare(b.content || '');
                     });
                 
                 const notes = rows
                     .map(row => row.note)
                     .filter((note): note is Exclude<typeof note, null> => note !== null)
                     .filter((note, idx, arr) => arr.findIndex(n => n.id === note.id) === idx)
-                    .sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
+                    .sort((a, b) => {
+                        const pinnedDiff = (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0);
+                        if (pinnedDiff !== 0) return pinnedDiff;
+                        return (a.title || '').localeCompare(b.title || '');
+                    });
 
                 return {
                     ...projectData,
@@ -191,7 +197,7 @@ export const Query = {
                 )
             )
             .orderBy(
-                desc(webhook.createdAt)
+                asc(webhook.name)
             );
     },
 

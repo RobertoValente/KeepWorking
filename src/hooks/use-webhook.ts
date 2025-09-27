@@ -26,7 +26,7 @@ export const useCreateWebhook = () => {
         onSuccess: (newWebhook, userId) => {
             queryClient.invalidateQueries({ queryKey: ['webhooks', userId] });
             queryClient.setQueryData(['webhooks', userId], (oldData: Webhook[]) => {
-                return [newWebhook, ...(oldData || [])];
+                return [...(oldData || []), newWebhook].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
             });
         },
     });
@@ -40,7 +40,8 @@ export function useUpdateWebhook() {
         onSuccess: (nullValueIdkWhy, variables) => {
             queryClient.invalidateQueries({ queryKey: ['webhooks', variables.userId] });
             queryClient.setQueryData(['webhooks', variables.userId], (oldData: Webhook[]) => {
-                return oldData?.map(webhook => webhook.id === variables.updatedWebhook.id ? variables.updatedWebhook : webhook) || [];
+                return (oldData?.map(webhook => webhook.id === variables.updatedWebhook.id ? variables.updatedWebhook : webhook) || [])
+                    .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
             });
             queryClient.setQueryData(['webhook', variables.updatedWebhook.id], variables.updatedWebhook);
         }

@@ -21,7 +21,9 @@ export const useGetProjectById = (projectId: string) => {
                     if ((a.isDone ?? 0) !== (b.isDone ?? 0)) {
                         return (a.isDone ?? 0) - (b.isDone ?? 0);
                     }
-                    return (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                    const priorityDiff = (priorityOrder[a.priority as string] ?? 3) - (priorityOrder[b.priority as string] ?? 3);
+                    if (priorityDiff !== 0) return priorityDiff;
+                    return (a.content || '').localeCompare(b.content || '');
                 });
             }
             return project;
@@ -38,7 +40,7 @@ export const useCreateProject = () => {
         onSuccess: (newProject, userId) => {
             queryClient.invalidateQueries({ queryKey: ['projects', userId] });
             queryClient.setQueryData(['projects', userId], (oldData: Project[]) => {
-                return [newProject, ...(oldData || [])];
+                return [...(oldData || []), newProject].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
             });
         },
     });
@@ -52,7 +54,8 @@ export function useUpdateProject() {
         onSuccess: (nullValueIdkWhy, variables) => {
             queryClient.invalidateQueries({ queryKey: ['projects', variables.userId] });
             queryClient.setQueryData(['projects', variables.userId], (oldData: Project[]) => {
-                return oldData?.map(project => project.id === variables.updatedProject.id ? variables.updatedProject : project) || [];
+                return (oldData?.map(project => project.id === variables.updatedProject.id ? variables.updatedProject : project) || [])
+                    .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
             });
             queryClient.setQueryData(['project', variables.updatedProject.id], variables.updatedProject);
         }

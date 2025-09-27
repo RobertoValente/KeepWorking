@@ -14,7 +14,11 @@ export function useCreateNote() {
                 if (!oldData) return null;
                 return {
                     ...oldData,
-                    notes: [...(oldData.notes || []), newNote].sort((a, b) => (b.isPinned ?? 0) - (a.isPinned ?? 0)),
+                    notes: [...(oldData.notes || []), newNote].sort((a, b) => {
+                        const pinnedDiff = (b.isPinned ?? 0) - (a.isPinned ?? 0);
+                        if (pinnedDiff !== 0) return pinnedDiff;
+                        return (a.title || '').localeCompare(b.title || '');
+                    }),
                 };
             });
         },
@@ -30,9 +34,14 @@ export function useUpdateNote() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             queryClient.setQueryData(['project', variables.updatedNote.projectId], (oldData: any) => {
                 if (!oldData) return null;
+                const updatedNotes = oldData.notes?.map((note: Note) => note.id === variables.updatedNote.id ? variables.updatedNote : note) || [];
                 return {
                     ...oldData,
-                    notes: oldData.notes?.map((note: Note) => note.id === variables.updatedNote.id ? variables.updatedNote : note) || [],
+                    notes: updatedNotes.sort((a: Note, b: Note) => {
+                        const pinnedDiff = (b.isPinned ?? 0) - (a.isPinned ?? 0);
+                        if (pinnedDiff !== 0) return pinnedDiff;
+                        return (a.title || '').localeCompare(b.title || '');
+                    }),
                 };
             });
         },
