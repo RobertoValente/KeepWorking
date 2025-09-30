@@ -32,20 +32,33 @@ function formatDate(date: Date | string | undefined): string {
     }).format(date);
 }
 
-function formatLogContent(content: string) {
-    try {
-        const parsed = JSON.parse(content);
+function formatLogContent(type: string, content: string) {
+    if (type === 'external') {
         return (
-            <pre className="truncate w-full break-words whitespace-pre-wrap pr-2 sm:pr-3">
-                {JSON.stringify(parsed, null, 2)}
-            </pre>
-        );
-    } catch {
-        return (
-            <span className="font-medium truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
+            <span className="text-sm font-medium truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
                 {content}
             </span>
         );
+    } else {
+        try {
+            const parsed = JSON.parse(content);
+            return (
+                <div className="flex flex-col gap-1 w-full">
+                    <span className="font-semibold text-sm break-words whitespace-pre-line pr-2 sm:pr-3">
+                        {parsed.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground break-words whitespace-pre-line pr-2 sm:pr-3">
+                        {parsed.description}
+                    </span>
+                </div>
+            );
+        } catch {
+            return (
+                <span className="text-sm font-medium truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
+                    {content}
+                </span>
+            );
+        }
     }
 }
 
@@ -170,8 +183,8 @@ export default function WebhookPage() {
                                                         className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm w-full max-w-full sm:max-w-none text-center sm:text-left flex-1 min-w-[280px]"
                                                     >
                                                         <div className="flex items-center gap-3 w-full">
-                                                            <div className="flex flex-col justify-center flex-1 min-w-0 text-left">
-                                                                {formatLogContent(log.content)}
+                                                            <div className={`type-${log.type} flex flex-col justify-center flex-1 min-w-0 text-left`}>
+                                                                {formatLogContent(log.type || '', log.content || '')}
                                                             </div>
                                                             <Button
                                                                 onClick={() => {setSelectedLog(log); setDeleteLog(true)}}

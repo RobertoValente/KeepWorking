@@ -11,6 +11,7 @@ export async function POST(
         const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
         
         if (isRateLimited(ip)) {
+            console.log(`[LOGS] Rate limit exceeded for IP: ${ip}`);
             return NextResponse.json(
                 { error: "Too many requests" },
                 { status: 429 }
@@ -19,41 +20,88 @@ export async function POST(
 
         const webhookId = (await params).idWebhook;
         
-        const typeHeader = request.headers.get('X-KEEPWORKING-TYPE') || 'info';
-        const typeValidation = sanitizeAndValidate(typeHeader, 32);
-        
-        if (!typeValidation.isValid) {
-            return NextResponse.json(
-                { error: "Invalid type header" },
-                { status: 400 }
-            );
-        }
-
+        const typeHeader = request.headers.get('X-KEEPWORKING-TYPE');
         const body = await request.text();
-        const contentValidation = sanitizeAndValidate(body, 5000);
-        
-        if (!contentValidation.isValid || !contentValidation.sanitized) {
-            return NextResponse.json(
-                { error: "Invalid or empty content" },
-                { status: 400 }
-            );
+
+        if (typeHeader) {
+            //-> Header exists - save request body as object with title and description
+            const typeValidation = sanitizeAndValidate(typeHeader, 32);
+            
+            if (!typeValidation.isValid) {
+                console.log(`[LOGS] Invalid type header`);
+                return NextResponse.json(
+                    { error: "Invalid type header" },
+                    { status: 400 }
+                );
+            }
+
+            let parsedBody;
+            try {
+                parsedBody = JSON.parse(body);
+            } catch {
+                console.log(`[LOGS] Invalid JSON in request body`);
+                return NextResponse.json(
+                    { error: "Invalid JSON in request body" },
+                    { status: 400 }
+                );
+            }
+
+            if (!parsedBody.title || !parsedBody.description) {
+                console.log(`[LOGS] Missing title or description in request body`);
+                return NextResponse.json(
+                    { error: "Missing title or description in request body" },
+                    { status: 400 }
+                );
+            }
+
+            const titleValidation = sanitizeAndValidate(parsedBody.title, 200);
+            const descriptionValidation = sanitizeAndValidate(parsedBody.description, 2000);
+
+            if (!titleValidation.isValid || !descriptionValidation.isValid) {
+                console.log(`[LOGS] Invalid title or description content`);
+                return NextResponse.json(
+                    { error: "Invalid title or description content" },
+                    { status: 400 }
+                );
+            }
+
+            await Query.createLog({
+                content: JSON.stringify({
+                    title: titleValidation.sanitized,
+                    description: descriptionValidation.sanitized
+                }),
+                type: typeValidation.sanitized,
+                webhookId,
+                timestamp: new Date(),
+            });
+        } else {
+            //-> Header doesn't exist - save whole body as content with type 'external'
+            const contentValidation = sanitizeAndValidate(body, 5000);
+            
+            if (!contentValidation.isValid || !contentValidation.sanitized) {
+                console.log(`[LOGS] Invalid or empty content`);
+                return NextResponse.json(
+                    { error: "Invalid or empty content" },
+                    { status: 400 }
+                );
+            }
+
+            await Query.createLog({
+                content: contentValidation.sanitized,
+                type: 'external',
+                webhookId,
+                timestamp: new Date(),
+            });
         }
 
-        await Query.createLog({
-            content: contentValidation.sanitized,
-            type: typeValidation.sanitized,
-            webhookId,
-            timestamp: new Date(),
-        });
-
+        console.log(`[LOGS] Log created successfully`);
         return NextResponse.json(
             { message: "Log created successfully" },
             { status: 201 }
         );
 
     } catch (error: unknown) {
-        console.error("Webhook endpoint error:", error);
-        
+        console.log(`[LOGS] Webhook endpoint error: ${error}`);
         return NextResponse.json(
             { error: "Failed to process request" },
             { status: 400 }
