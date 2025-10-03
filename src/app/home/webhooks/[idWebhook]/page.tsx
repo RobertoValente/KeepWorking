@@ -44,10 +44,10 @@ function formatLogContent(type: string, content: string) {
             const parsed = JSON.parse(content);
             return (
                 <div className="flex flex-col gap-1 w-full">
-                    <span className="font-semibold text-sm break-words whitespace-pre-line pr-2 sm:pr-3">
+                    <span className="font-semibold text-base truncate break-words whitespace-pre-line pr-2 sm:pr-3">
                         {parsed.title}
                     </span>
-                    <span className="text-xs text-muted-foreground break-words whitespace-pre-line pr-2 sm:pr-3">
+                    <span className="text-sm text-muted-foreground break-words whitespace-pre-line pr-2 sm:pr-3">
                         {parsed.description}
                     </span>
                 </div>

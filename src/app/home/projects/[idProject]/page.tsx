@@ -228,7 +228,7 @@ export default function ProjectPage() {
                                                                 <h3 className="font-semibold text-base truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
                                                                     {note.title}
                                                                 </h3>
-                                                                <p className="text-sm text-gray-600 dark:text-gray-400 truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3 mt-1">
+                                                                <p className="text-sm text-gray-600 dark:text-gray-400 truncate w-full break-words whitespace-pre-line pr-2 sm:pr-3">
                                                                     {note.content}
                                                                 </p>
                                                             </div>
