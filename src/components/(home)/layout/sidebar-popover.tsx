@@ -16,11 +16,11 @@ export function SidebarPopover() {
                 <PopoverTrigger asChild>
                     <Button
                         size="icon"
-                        className="size-8 w-full group-data-[collapsible=icon]:opacity-0 cursor-pointer"
+                        className="select-none size-8 w-full group-data-[collapsible=icon]:opacity-0 cursor-pointer"
                         variant="outline"
                     >Quick Links</Button>
                 </PopoverTrigger>
-                <PopoverContent className="mt-1 w-[271px] md:w-56">
+                <PopoverContent className="mt-1 w-[271px] md:w-56 select-none">
                     <div className="flex flex-col gap-2">
                         {Object.entries(usefulLinks).map(([name, url]) => (
                             <Link

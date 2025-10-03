@@ -32,7 +32,7 @@ export function SidebarFooter() {
     };
 
     return (
-        <SidebarMenu className="gap-2">
+        <SidebarMenu className="gap-2 select-none">
             <SidebarMenuItem key="ThemeSidebarSelect">
                 <Select
                     defaultValue={theme}

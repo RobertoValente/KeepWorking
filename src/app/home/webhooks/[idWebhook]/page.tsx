@@ -130,7 +130,7 @@ export default function WebhookPage() {
                         </div>
                         <div className="flex items-center gap-2 mt-4">
                             <Button
-                                variant="outline" className="cursor-pointer hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950 transition-colors"
+                                variant="outline" className="select-none cursor-pointer hover:border-yellow-400 dark:hover:border-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-950 transition-colors"
                                 onClick={() => setEditWebhook(true)}
                             >
                                 <Pencil className="size-4 text-yellow-500 dark:text-yellow-400" />
@@ -138,7 +138,7 @@ export default function WebhookPage() {
                             </Button>
                             <Button
                                 onClick={() => setDeleteWebhook(true)}
-                                variant="outline" className="cursor-pointer hover:border-red-400 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                                variant="outline" className="select-none cursor-pointer hover:border-red-400 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
                             >
                                 <Trash2 className="size-4 text-red-500 dark:text-red-400" />
                                 Delete Webhook
@@ -152,7 +152,7 @@ export default function WebhookPage() {
                         </div>
 
                         <Tabs defaultValue="logs">
-                            <TabsList className="absolute right-6 -mt-13">
+                            <TabsList className="absolute right-6 -mt-13 select-none">
                                 <TabsTrigger value="logs" className="cursor-pointer">Logs</TabsTrigger>
                             </TabsList>
                             <TabsContent value="logs">
@@ -161,7 +161,7 @@ export default function WebhookPage() {
                                         <CardDescription>
                                             <Button 
                                                 onClick={() => refetch()} 
-                                                className="cursor-pointer w-full" 
+                                                className="select-none cursor-pointer w-full" 
                                                 variant="outline"
                                                 disabled={isFetching}
                                             >

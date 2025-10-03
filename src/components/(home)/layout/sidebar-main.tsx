@@ -64,7 +64,7 @@ export function SidebarMain() {
                 </SidebarGroup>
             )}
 
-            <div className="flex flex-col pt-1">
+            <div className="flex flex-col pt-1 select-none">
                 {!isAllLoaded || isPending ? (
                     <Loader2 className="size-4 animate-spin m-auto mt-3" />
                 ) : (
